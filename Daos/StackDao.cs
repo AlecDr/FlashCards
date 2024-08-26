@@ -12,7 +12,11 @@ internal abstract class StackDao
 
         string query = "SELECT id, name FROM STACKS WHERE id = @id AND username = @username";
 
-        return DatabaseHelper.SqliteConnection.QueryFirstOrDefault<StackShowDTO>(query, new { id, username });
+        StackShowDTO? stackShowDTO = DatabaseHelper.SqliteConnection.QueryFirstOrDefault<StackShowDTO>(query, new { id, username });
+
+        DatabaseHelper.SqliteConnection!.Close();
+
+        return stackShowDTO;
     }
 
     internal static List<StackShowDTO> GetAllStacksDapper(string username)

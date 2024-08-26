@@ -77,7 +77,7 @@ internal abstract class DatabaseHelper
             IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'STACKS' AND schema_id = SCHEMA_ID('dbo'))
             BEGIN
                 CREATE TABLE STACKS
-                    (id INTEGER PRIMARY KEY, name VARCHAR(255) NOT NULL, username VARCHAR(255) NOT NULL);
+                    (id INT NOT NULL IDENTITY(1,1) PRIMARY KEY, name VARCHAR(255) NOT NULL, username VARCHAR(255) NOT NULL);
             END;
             ";
         command.ExecuteNonQuery();

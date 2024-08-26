@@ -231,10 +231,10 @@ internal class FlashCardsHelper
     internal static StackPromptDTO? PromptUserForStackData(StackShowDTO? defaultStackShowDTO = null)
     {
         string? name = ConsoleHelper.GetText(
-            "What did you learn today?",
+            "Whats the stack name?",
             defaultStackShowDTO != null ? defaultStackShowDTO.Name : null,
             true,
-            true
+            true, 2
         );
 
         if (name != null)
