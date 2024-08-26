@@ -1,4 +1,4 @@
-﻿namespace CodingTracker.Helpers;
+﻿namespace FlashCards.Helpers;
 
 internal class ValidationHelper
 {

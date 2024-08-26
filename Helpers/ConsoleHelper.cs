@@ -1,15 +1,16 @@
 ﻿using Spectre.Console;
 using System.Globalization;
 
-namespace CodingTracker.Helpers;
+namespace FlashCards.Helpers;
 
 internal abstract class ConsoleHelper
 {
     internal static string ShowMainMenu(string username)
     {
-        ShowMessage($"CodingTracker - [blue] {username} [/] - [underline blue]Main Menu[/]", true, true, false);
+        ShowMessage($"FlashCards - [blue] {username} [/] - [underline blue]Main Menu[/]", true, true, false);
         ShowMessage("");
-        return GetChoice(CodingTrackerHelper.GetMenuChoices(), "Choose an option bellow");
+
+        return GetChoice(FlashCardsHelper.GetMenuChoices(), "Choose an option bellow");
     }
 
     internal static void ClearWindow()
@@ -222,7 +223,7 @@ internal abstract class ConsoleHelper
 
     internal static void ShowTitle(string message)
     {
-        ShowMessage($"CodingTracker - [underline blue]{message}[/]", true, true, false);
+        ShowMessage($"FlashCards - [underline blue]{message}[/]", true, true, false);
         ShowMessage("");
     }
 }

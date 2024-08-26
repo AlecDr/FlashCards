@@ -1,8 +1,7 @@
 ﻿using System.Configuration;
 using System.Data.SQLite;
-using System.Diagnostics;
 
-namespace CodingTracker.Helpers;
+namespace FlashCards.Helpers;
 
 internal abstract class DatabaseHelper
 {
@@ -33,7 +32,6 @@ internal abstract class DatabaseHelper
         string databaseName = ConfigurationManager.AppSettings.Get("DatabaseName");
         string databasePath = System.IO.Path.Combine(projectFolder, databaseName);
 
-        Debug.Print(databasePath);
         return databasePath;
     }
 
@@ -54,10 +52,10 @@ internal abstract class DatabaseHelper
     {
         _sqliteConnection!.Open();
 
-        // coding sessions table
+        // stacks table
         SQLiteCommand command = CreateCommand();
 
-        command.CommandText = "CREATE TABLE IF NOT EXISTS CODING_SESSIONS(id INTEGER PRIMARY KEY AUTOINCREMENT, description VARCHAR(255), username VARCHAR(255) NOT NULL, start_date VARCHAR(19) NOT NULL, end_date VARCHAR(19) NOT NULL, duration_in_seconds INT)";
+        command.CommandText = "CREATE TABLE IF NOT EXISTS STACKS(id INTEGER PRIMARY KEY AUTOINCREMENT, description VARCHAR(255), username VARCHAR(255) NOT NULL)";
         command.ExecuteNonQuery();
 
         _sqliteConnection.Close();

@@ -1,13 +1,12 @@
-﻿using CodingTracker.Helpers;
+﻿using FlashCards.Helpers;
 
-namespace CodingTracker
+namespace FlashCards;
+
+internal class Program
 {
-    internal class Program
+    static void Main(string[] args)
     {
-        static void Main(string[] args)
-        {
-            CodingTrackerHelper codingTrackerHelper = new CodingTrackerHelper();
-            codingTrackerHelper.Run();
-        }
+        FlashCardsHelper flashCardsHelper = new FlashCardsHelper();
+        flashCardsHelper.Run();
     }
 }
