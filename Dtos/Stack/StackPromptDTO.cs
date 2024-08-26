@@ -2,10 +2,10 @@
 
 internal class StackPromptDTO
 {
-    internal string? Description { get; }
+    internal string? Name { get; }
 
-    internal StackPromptDTO(string? description)
+    internal StackPromptDTO(string? name)
     {
-        Description = description;
+        Name = name;
     }
 }

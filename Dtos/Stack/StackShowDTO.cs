@@ -3,13 +3,13 @@
 internal class StackShowDTO
 {
     internal int Id { get; }
-    internal string? Description { get; }
+    internal string? Name { get; }
 
     internal StackShowDTO() { }
 
-    internal StackShowDTO(int id, string? description)
+    internal StackShowDTO(int id, string? name)
     {
         Id = id;
-        Description = description;
+        Name = name;
     }
 }

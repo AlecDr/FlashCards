@@ -10,7 +10,7 @@ internal abstract class StackDao
     {
         DatabaseHelper.SqliteConnection!.Open();
 
-        string query = "SELECT id, description FROM STACKS WHERE id = @id AND username = @username";
+        string query = "SELECT id, name FROM STACKS WHERE id = @id AND username = @username";
 
         return DatabaseHelper.SqliteConnection.QueryFirstOrDefault<StackShowDTO>(query, new { id, username });
     }
@@ -19,7 +19,7 @@ internal abstract class StackDao
     {
         DatabaseHelper.SqliteConnection!.Open();
 
-        string query = "SELECT id as Id, description as Description FROM STACKS WHERE username = @username";
+        string query = "SELECT id as Id, name as Name FROM STACKS WHERE username = @username";
 
         List<StackShowDTO> stacks = DatabaseHelper.SqliteConnection.Query<StackShowDTO>(query, new { username }).ToList();
         DatabaseHelper.SqliteConnection!.Close();
@@ -31,7 +31,7 @@ internal abstract class StackDao
     {
         DatabaseHelper.SqliteConnection!.Open();
 
-        string query = "INSERT INTO STACKS (description, username) VALUES (@Description, @Username);";
+        string query = "INSERT INTO STACKS (name, username) VALUES (@Name, @Username);";
 
         DatabaseHelper.SqliteConnection!.Execute(query, stackStoreDTO.ToAnonymousObject());
         DatabaseHelper.SqliteConnection!.Close();
@@ -45,7 +45,7 @@ internal abstract class StackDao
         {
             DatabaseHelper.SqliteConnection!.Open();
 
-            string query = "UPDATE STACKS SET description = @Description WHERE id = @Id and username = @Username;";
+            string query = "UPDATE STACKS SET name = @Name WHERE id = @Id and username = @Username;";
 
             DatabaseHelper.SqliteConnection!.Execute(query, stackUpdateDTO.ToAnonymousObject());
             DatabaseHelper.SqliteConnection!.Close();

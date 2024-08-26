@@ -3,19 +3,19 @@
 internal class StackStoreDTO
 {
     internal string Username { get; }
-    internal string? Description { get; }
+    internal string? Name { get; }
 
-    internal StackStoreDTO(string username, string? description)
+    internal StackStoreDTO(string username, string? name)
     {
         Username = username;
-        Description = description;
+        Name = name;
     }
 
     internal static StackStoreDTO FromPromptDTO(string username, StackPromptDTO stackPromptDTO)
     {
         return new StackStoreDTO(
             username,
-            stackPromptDTO.Description
+            stackPromptDTO.Name
         );
     }
 
@@ -24,7 +24,7 @@ internal class StackStoreDTO
         return new
         {
             Username,
-            Description,
+            Name,
         };
     }
 }

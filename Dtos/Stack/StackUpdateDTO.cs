@@ -7,8 +7,8 @@ internal class StackUpdateDTO : StackStoreDTO
     internal StackUpdateDTO(
         int id,
         string username,
-        string? description)
-        : base(username, description)
+        string? name)
+        : base(username, name)
     {
         Id = id;
     }
@@ -18,7 +18,7 @@ internal class StackUpdateDTO : StackStoreDTO
         return new StackUpdateDTO(
             id,
             username,
-            stackPromptDTO.Description
+            stackPromptDTO.Name
         );
     }
 
@@ -28,7 +28,7 @@ internal class StackUpdateDTO : StackStoreDTO
         {
             Id,
             Username,
-            Description,
+            Name,
         };
     }
 }

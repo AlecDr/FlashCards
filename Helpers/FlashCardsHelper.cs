@@ -137,7 +137,7 @@ internal class FlashCardsHelper
 
     private void PrintStack(StackShowDTO stack)
     {
-        ConsoleHelper.ShowMessage($"{stack.Id} - {stack.Description}");
+        ConsoleHelper.ShowMessage($"{stack.Id} - {stack.Name}");
     }
 
     private void ListStacks()
@@ -230,16 +230,16 @@ internal class FlashCardsHelper
 
     internal static StackPromptDTO? PromptUserForStackData(StackShowDTO? defaultStackShowDTO = null)
     {
-        string? description = ConsoleHelper.GetText(
+        string? name = ConsoleHelper.GetText(
             "What did you learn today?",
-            defaultStackShowDTO != null ? defaultStackShowDTO.Description : null,
+            defaultStackShowDTO != null ? defaultStackShowDTO.Name : null,
             true,
             true
         );
 
-        if (description != null)
+        if (name != null)
         {
-            return new StackPromptDTO(description);
+            return new StackPromptDTO(name);
         }
 
 
