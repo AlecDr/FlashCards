@@ -167,9 +167,15 @@ internal abstract class ConsoleHelper
                 .AddChoices(choices));
     }
 
-    internal static void PressAnyKeyToContinue()
+    internal static void PressAnyKeyToContinue(string? message = null)
     {
         ShowMessage("");
+
+        if (message != null)
+        {
+            ShowMessage(message);
+        }
+
         ShowMessage("Press any key to continue");
         AnsiConsole.Console.Input.ReadKey(false);
     }

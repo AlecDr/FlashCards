@@ -41,7 +41,7 @@ internal class MainMenu : IMenu
                 Run();
                 break;
             case '6':
-                FlashCardsHelper.ChangeMenu(new ManageStacksMenu());
+                ManageStacks();
                 break;
 
             default:
@@ -136,6 +136,21 @@ internal class MainMenu : IMenu
         }
     }
 
+    private void ManageStacks()
+    {
+        List<StackShowDTO> stacks = StackDao.GetAllStacksDapper(FlashCardsHelper.CurrentUser!);
+
+        if (stacks.Count > 0)
+        {
+            FlashCardsHelper.ChangeMenu(new ManageStacksMenu());
+        }
+        else
+        {
+            ConsoleHelper.PressAnyKeyToContinue("You must create a stack before going to the manage stacks menu!");
+            Run();
+        }
+    }
+
     private void DeleteStack()
     {
         ConsoleHelper.ShowTitle("Delete a stack");
@@ -206,8 +221,6 @@ internal class MainMenu : IMenu
             return stacks.FirstOrDefault(stack => stack.Id == (id > 0 ? id : 0));
         }
     }
-
-
 
     internal static StackPromptDTO? PromptUserForStackData(StackShowDTO? defaultStackShowDTO = null)
     {
