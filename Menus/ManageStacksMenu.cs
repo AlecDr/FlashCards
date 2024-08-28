@@ -1,4 +1,6 @@
-﻿using FlashCards.Dtos.Stack;
+﻿using FlashCards.Daos;
+using FlashCards.Dtos.Card;
+using FlashCards.Dtos.Stack;
 using FlashCards.Helpers;
 using FlashCards.Menus.Interfaces;
 
@@ -49,6 +51,11 @@ internal class ManageStacksMenu : IMenu
         switch (option)
         {
 
+            case '1':
+                CreateCard();
+                Run();
+                break;
+
             case '5':
                 SelectCurrentStack();
                 Run();
@@ -96,5 +103,57 @@ internal class ManageStacksMenu : IMenu
         }
 
         return option;
+    }
+
+    private void CreateCard()
+    {
+        ConsoleHelper.ShowTitle("Create an Card");
+
+        CardPromptDTO? cardPromptDTO = PromptUserForCardData();
+
+        if (cardPromptDTO != null)
+        {
+            CardDao.StoreCardDapper(
+                CardStoreDTO.FromPromptDTO(
+                    CurrentStack!.Id,
+                    cardPromptDTO
+                )
+            );
+
+            ConsoleHelper.ShowMessage("Card stored successfully!");
+            ConsoleHelper.PressAnyKeyToContinue();
+        }
+        else
+        {
+            ConsoleHelper.ShowMessage("No data was provided, operation canceled by user!");
+            ConsoleHelper.PressAnyKeyToContinue();
+        }
+    }
+
+    internal static CardPromptDTO? PromptUserForCardData(CardShowDTO? defaultCardShowDTO = null)
+    {
+        string? front = ConsoleHelper.GetText(
+            "Whats the stack front text?",
+            defaultCardShowDTO != null ? defaultCardShowDTO.Front : null,
+            true,
+            true, 2
+        );
+
+        if (front != null)
+        {
+            string? back = ConsoleHelper.GetText(
+                "Whats the stack back text?",
+                defaultCardShowDTO != null ? defaultCardShowDTO.Back : null,
+                true,
+                true, 2
+            );
+
+            if (back != null)
+            {
+                return new CardPromptDTO(front, back);
+            }
+        }
+
+        return null;
     }
 }
