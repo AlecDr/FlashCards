@@ -7,7 +7,8 @@ internal abstract class FlashCardsHelper
 {
     internal static string? CurrentUser { get; set; }
 
-    internal static IMenu CurrentMenu { get; set; } = new MainMenu();
+    private static IMenu _currentMenu = new MainMenu();
+    internal static IMenu CurrentMenu { get { return _currentMenu; } }
 
     internal static void Run()
     {
@@ -39,4 +40,12 @@ internal abstract class FlashCardsHelper
             CurrentUser = name;
         }
     }
+
+    internal static void ChangeMenu(IMenu menu)
+    {
+        _currentMenu = menu;
+        Run();
+    }
+
+
 }

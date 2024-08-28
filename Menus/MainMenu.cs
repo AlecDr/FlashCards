@@ -9,6 +9,8 @@ internal class MainMenu : IMenu
 {
     public void Run()
     {
+        ConsoleHelper.ClearWindow();
+
         string option = GetOption();
 
         RouteToOption(option.ElementAt(0));
@@ -38,6 +40,9 @@ internal class MainMenu : IMenu
                 FlashCardsHelper.AskName();
                 Run();
                 break;
+            case '6':
+                FlashCardsHelper.ChangeMenu(new ManageStacksMenu());
+                break;
 
             default:
                 Run();
@@ -53,12 +58,13 @@ internal class MainMenu : IMenu
             "3 - [blue]U[/]pdate stack",
             "4 - [blue]D[/]elete stack",
             "5 - [blue]A[/]lter username",
+            "6 - [blue]M[/]anage stacks",
             ];
     }
 
     public string GetOption()
     {
-        string option = ConsoleHelper.ShowMainMenu(FlashCardsHelper.CurrentUser!, GetMenuChoices());
+        string option = ConsoleHelper.ShowMenu(FlashCardsHelper.CurrentUser!, GetMenuChoices(), "Main Menu");
 
         while (option == null || option.Trim() == "")
         {

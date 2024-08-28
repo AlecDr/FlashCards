@@ -5,9 +5,9 @@ namespace FlashCards.Helpers;
 
 internal abstract class ConsoleHelper
 {
-    internal static string ShowMainMenu(string username, List<string> menuChoices)
+    internal static string ShowMenu(string username, List<string> menuChoices, string menuTitle)
     {
-        ShowMessage($"FlashCards - [blue] {username} [/] - [underline blue]Main Menu[/]", true, true, false);
+        ShowMessage($"FlashCards - [steelblue1] {username} [/] - [underline darkslategray2]{menuTitle}[/]", true, true, false);
         ShowMessage("");
 
         return GetChoice(menuChoices, "Choose an option bellow");
