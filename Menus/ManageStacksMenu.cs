@@ -1,17 +1,47 @@
-﻿using FlashCards.Helpers;
+﻿using FlashCards.Dtos.Stack;
+using FlashCards.Helpers;
 using FlashCards.Menus.Interfaces;
 
 namespace FlashCards.Menus;
 
 internal class ManageStacksMenu : IMenu
 {
+    private StackShowDTO? CurrentStack;
+
     public void Run()
     {
         ConsoleHelper.ClearWindow();
 
+        while (CurrentStack == null)
+        {
+            SelectCurrentStack(true);
+        }
+
         string option = GetOption();
 
         RouteToOption(option.ElementAt(0));
+    }
+
+    void SelectCurrentStack(bool goBackOnWrongSelection = false)
+    {
+        StackShowDTO? selectedStackShowDTO = MainMenu.ShowStacksAndAskForId("Whats the stack ID to manage?");
+
+        if (selectedStackShowDTO != null)
+        {
+            CurrentStack = selectedStackShowDTO;
+        }
+        else
+        {
+            if (goBackOnWrongSelection)
+            {
+                ConsoleHelper.PressAnyKeyToContinue("No stack found, going back to main menu");
+                GoBack();
+            }
+            else
+            {
+                SelectCurrentStack(false);
+            }
+        }
     }
 
     public void RouteToOption(char option)
@@ -20,8 +50,12 @@ internal class ManageStacksMenu : IMenu
         {
 
             case '5':
-                GoBack();
+                SelectCurrentStack();
                 Run();
+                break;
+
+            case '6':
+                GoBack();
                 break;
 
             default:
@@ -38,17 +72,22 @@ internal class ManageStacksMenu : IMenu
     public List<string> GetMenuChoices()
     {
         return [
-            //"1 - [blue]C[/]reate a card",
+            "1 - [blue]C[/]reate a card",
             //"2 - [blue]L[/]ist all cards",
             //"3 - [blue]U[/]pdate card",
             //"4 - [blue]D[/]elete card",
-            "5 - [blue]G[/]o back",
+            "5 - [blue]S[/]elect Stack",
+            "6 - [blue]G[/]o back",
             ];
     }
 
     public string GetOption()
     {
-        string option = ConsoleHelper.ShowMenu(FlashCardsHelper.CurrentUser!, GetMenuChoices(), "Manage Stacks");
+        string option = ConsoleHelper.ShowMenu(
+            FlashCardsHelper.CurrentUser!,
+            GetMenuChoices(),
+            $"Manage Stacks",
+            $" - [underline greenyellow] {CurrentStack!.Id} - {CurrentStack!.Name} [/]");
 
         while (option == null || option.Trim() == "")
         {
@@ -58,7 +97,4 @@ internal class ManageStacksMenu : IMenu
 
         return option;
     }
-
-
-
 }

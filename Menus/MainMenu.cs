@@ -171,7 +171,7 @@ internal class MainMenu : IMenu
         }
     }
 
-    private void PrintStack(StackShowDTO stack)
+    internal static void PrintStack(StackShowDTO stack)
     {
         ConsoleHelper.ShowMessage($"{stack.Id} - {stack.Name}");
     }
@@ -199,7 +199,7 @@ internal class MainMenu : IMenu
 
     }
 
-    private StackShowDTO? ShowStacksAndAskForId(string message)
+    internal static StackShowDTO? ShowStacksAndAskForId(string message)
     {
         List<StackShowDTO> stacks = StackDao.GetAllStacksDapper(FlashCardsHelper.CurrentUser!);
 
