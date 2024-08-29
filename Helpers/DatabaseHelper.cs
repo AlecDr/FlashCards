@@ -89,7 +89,7 @@ internal abstract class DatabaseHelper
             IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'CARDS' AND schema_id = SCHEMA_ID('dbo'))
             BEGIN
                 CREATE TABLE CARDS
-                    (id INT NOT NULL IDENTITY(1,1) PRIMARY KEY, front VARCHAR(255) NOT NULL, back VARCHAR(255) NOT NULL, stack_id INT NOT NULL, FOREIGN KEY (stack_id) REFERENCES STACKS(ID));
+                    (id INT NOT NULL IDENTITY(1,1) PRIMARY KEY, front VARCHAR(255) NOT NULL, back VARCHAR(255) NOT NULL, stack_id INT NOT NULL, sequence INT NOT NULL, FOREIGN KEY (stack_id) REFERENCES STACKS(ID));
             END;
             ";
         command.ExecuteNonQuery();

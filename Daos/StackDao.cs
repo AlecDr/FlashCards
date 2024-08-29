@@ -82,4 +82,17 @@ internal abstract class StackDao
 
         return false;
     }
+
+    internal static int? GetLastSequenceFromStack(int id)
+    {
+        DatabaseHelper.SqliteConnection!.Open();
+
+        string query = "SELECT max(sequence) from CARDS WHERE stack_id = @id";
+
+        int? stackShowDTO = DatabaseHelper.SqliteConnection.QueryFirstOrDefault<int?>(query, new { id });
+
+        DatabaseHelper.SqliteConnection!.Close();
+
+        return stackShowDTO;
+    }
 }

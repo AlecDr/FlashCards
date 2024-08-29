@@ -10,7 +10,7 @@ internal abstract class CardDao
     {
         DatabaseHelper.SqliteConnection!.Open();
 
-        string query = "INSERT INTO CARDS (front, back, stack_id) VALUES (@Front, @Back, @StackId);";
+        string query = "INSERT INTO CARDS (front, back, stack_id, sequence) VALUES (@Front, @Back, @StackId, @Sequence);";
 
         DatabaseHelper.SqliteConnection!.Execute(query, cardStoreDTO.ToAnonymousObject());
         DatabaseHelper.SqliteConnection!.Close();

@@ -5,12 +5,14 @@ internal class CardStoreDTO
     internal string Front { get; }
     internal string Back { get; }
     internal int StackId { get; }
+    internal int Sequence { get; }
 
-    internal CardStoreDTO(int stackId, string front, string back)
+    internal CardStoreDTO(int stackId, string front, string back, int sequence)
     {
         StackId = stackId;
         Front = front;
         Back = back;
+        Sequence = sequence;
     }
 
     internal static CardStoreDTO FromPromptDTO(int stackId, CardPromptDTO stackPromptDTO)
@@ -18,7 +20,8 @@ internal class CardStoreDTO
         return new CardStoreDTO(
             stackId,
             stackPromptDTO.Front,
-            stackPromptDTO.Back
+            stackPromptDTO.Back,
+            stackPromptDTO.Sequence
         );
     }
 
@@ -29,6 +32,7 @@ internal class CardStoreDTO
             StackId,
             Front,
             Back,
+            Sequence,
         };
     }
 }

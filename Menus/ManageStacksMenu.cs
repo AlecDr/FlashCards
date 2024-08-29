@@ -130,10 +130,10 @@ internal class ManageStacksMenu : IMenu
         }
     }
 
-    internal static CardPromptDTO? PromptUserForCardData(CardShowDTO? defaultCardShowDTO = null)
+    internal CardPromptDTO? PromptUserForCardData(CardShowDTO? defaultCardShowDTO = null)
     {
         string? front = ConsoleHelper.GetText(
-            "Whats the stack front text?",
+            "Whats the card front text?",
             defaultCardShowDTO != null ? defaultCardShowDTO.Front : null,
             true,
             true, 2
@@ -142,7 +142,7 @@ internal class ManageStacksMenu : IMenu
         if (front != null)
         {
             string? back = ConsoleHelper.GetText(
-                "Whats the stack back text?",
+                "Whats the card back text?",
                 defaultCardShowDTO != null ? defaultCardShowDTO.Back : null,
                 true,
                 true, 2
@@ -150,7 +150,15 @@ internal class ManageStacksMenu : IMenu
 
             if (back != null)
             {
-                return new CardPromptDTO(front, back);
+                int? lastSequenceFromStack = StackDao.GetLastSequenceFromStack(CurrentStack!.Id);
+                int sequence = 1;
+
+                if (lastSequenceFromStack != null)
+                {
+                    sequence = lastSequenceFromStack.Value + 1;
+                }
+
+                return new CardPromptDTO(front, back, sequence);
             }
         }
 
