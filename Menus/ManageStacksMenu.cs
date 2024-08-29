@@ -55,6 +55,10 @@ internal class ManageStacksMenu : IMenu
                 CreateCard();
                 Run();
                 break;
+            case '2':
+                ListCards();
+                Run();
+                break;
 
             case '5':
                 SelectCurrentStack();
@@ -80,7 +84,7 @@ internal class ManageStacksMenu : IMenu
     {
         return [
             "1 - [blue]C[/]reate a card",
-            //"2 - [blue]L[/]ist all cards",
+            "2 - [blue]L[/]ist all cards",
             //"3 - [blue]U[/]pdate card",
             //"4 - [blue]D[/]elete card",
             "5 - [blue]S[/]elect Stack",
@@ -130,6 +134,34 @@ internal class ManageStacksMenu : IMenu
         }
     }
 
+    internal static void PrintCard(CardShowDTO card)
+    {
+        ConsoleHelper.ShowMessage($"{card.Sequence} - [dodgerblue1] Front: {card.Front}[/] - [springgreen3] Back: {card.Back}[/]");
+    }
+
+    private void ListCards()
+    {
+        ConsoleHelper.ShowTitle("List of cards");
+
+        List<CardShowDTO> cards = CardDao.GetAllCardsFromStack(CurrentStack!.Id);
+
+        if (cards.Count() > 0)
+        {
+            foreach (CardShowDTO card in cards)
+            {
+                PrintCard(card);
+            }
+
+            ConsoleHelper.PressAnyKeyToContinue();
+        }
+        else
+        {
+            ConsoleHelper.ShowMessage("No card found.");
+            ConsoleHelper.PressAnyKeyToContinue();
+        }
+
+    }
+
     internal CardPromptDTO? PromptUserForCardData(CardShowDTO? defaultCardShowDTO = null)
     {
         string? front = ConsoleHelper.GetText(
@@ -164,4 +196,6 @@ internal class ManageStacksMenu : IMenu
 
         return null;
     }
+
+
 }
