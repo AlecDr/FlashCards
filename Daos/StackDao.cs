@@ -6,7 +6,7 @@ namespace FlashCards.Daos;
 
 internal abstract class StackDao
 {
-    internal static StackShowDTO? FindStackDapper(int id, string username)
+    internal static StackShowDTO? FindStack(int id, string username)
     {
         DatabaseHelper.SqliteConnection!.Open();
 
@@ -19,7 +19,7 @@ internal abstract class StackDao
         return stackShowDTO;
     }
 
-    internal static List<StackShowDTO> GetAllStacksDapper(string username)
+    internal static List<StackShowDTO> GetAllStacks(string username)
     {
         DatabaseHelper.SqliteConnection!.Open();
 
@@ -31,7 +31,7 @@ internal abstract class StackDao
         return stacks;
     }
 
-    internal static void StoreStackDapper(StackStoreDTO stackStoreDTO)
+    internal static void StoreStack(StackStoreDTO stackStoreDTO)
     {
         DatabaseHelper.SqliteConnection!.Open();
 
@@ -41,9 +41,9 @@ internal abstract class StackDao
         DatabaseHelper.SqliteConnection!.Close();
     }
 
-    internal static bool UpdateStackDapper(StackUpdateDTO stackUpdateDTO)
+    internal static bool UpdateStack(StackUpdateDTO stackUpdateDTO)
     {
-        StackShowDTO? stack = FindStackDapper(stackUpdateDTO.Id, stackUpdateDTO.Username);
+        StackShowDTO? stack = FindStack(stackUpdateDTO.Id, stackUpdateDTO.Username);
 
         if (stack != null)
         {
@@ -60,9 +60,9 @@ internal abstract class StackDao
         return false;
     }
 
-    internal static bool DeleteStackDapper(int id, string username)
+    internal static bool DeleteStack(int id, string username)
     {
-        StackShowDTO? stack = FindStackDapper(id, username);
+        StackShowDTO? stack = FindStack(id, username);
 
         if (stack != null)
         {

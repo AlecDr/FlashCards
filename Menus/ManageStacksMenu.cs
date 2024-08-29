@@ -86,7 +86,7 @@ internal class ManageStacksMenu : IMenu
             "1 - [blue]C[/]reate a card",
             "2 - [blue]L[/]ist all cards",
             //"3 - [blue]U[/]pdate card",
-            //"4 - [blue]D[/]elete card",
+            "4 - [blue]D[/]elete card",
             "5 - [blue]S[/]elect Stack",
             "6 - [blue]G[/]o back",
             ];

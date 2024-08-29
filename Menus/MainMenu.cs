@@ -83,7 +83,7 @@ internal class MainMenu : IMenu
 
         if (stackPromptDTO != null)
         {
-            StackDao.StoreStackDapper(
+            StackDao.StoreStack(
                 StackStoreDTO.FromPromptDTO(
                     FlashCardsHelper.CurrentUser!,
                     stackPromptDTO
@@ -112,7 +112,7 @@ internal class MainMenu : IMenu
 
             if (stackPromptDTO != null)
             {
-                bool result = StackDao.UpdateStackDapper(
+                bool result = StackDao.UpdateStack(
                    StackUpdateDTO.FromPromptDTO(
                        selectedStackShowDTO.Id,
                        FlashCardsHelper.CurrentUser!,
@@ -138,7 +138,7 @@ internal class MainMenu : IMenu
 
     private void ManageStacks()
     {
-        List<StackShowDTO> stacks = StackDao.GetAllStacksDapper(FlashCardsHelper.CurrentUser!);
+        List<StackShowDTO> stacks = StackDao.GetAllStacks(FlashCardsHelper.CurrentUser!);
 
         if (stacks.Count > 0)
         {
@@ -159,7 +159,7 @@ internal class MainMenu : IMenu
 
         if (selectedStackShowDTO != null)
         {
-            bool result = StackDao.DeleteStackDapper(selectedStackShowDTO.Id, FlashCardsHelper.CurrentUser!);
+            bool result = StackDao.DeleteStack(selectedStackShowDTO.Id, FlashCardsHelper.CurrentUser!);
 
             ConsoleHelper.ShowMessage(result ? "Stack deleted successfully!" : "Something went wrong :(");
             ConsoleHelper.PressAnyKeyToContinue();
@@ -180,7 +180,7 @@ internal class MainMenu : IMenu
     {
         ConsoleHelper.ShowTitle("List of stacks");
 
-        List<StackShowDTO> stacks = StackDao.GetAllStacksDapper(FlashCardsHelper.CurrentUser!);
+        List<StackShowDTO> stacks = StackDao.GetAllStacks(FlashCardsHelper.CurrentUser!);
 
         if (stacks.Count() > 0)
         {
@@ -201,7 +201,7 @@ internal class MainMenu : IMenu
 
     internal static StackShowDTO? ShowStacksAndAskForId(string message)
     {
-        List<StackShowDTO> stacks = StackDao.GetAllStacksDapper(FlashCardsHelper.CurrentUser!);
+        List<StackShowDTO> stacks = StackDao.GetAllStacks(FlashCardsHelper.CurrentUser!);
 
         if (stacks.Count <= 0)
         {
