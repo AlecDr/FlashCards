@@ -59,6 +59,10 @@ internal class ManageStacksMenu : IMenu
                 ListCards();
                 Run();
                 break;
+            case '4':
+                DeleteCard();
+                Run();
+                break;
 
             case '5':
                 SelectCurrentStack();
@@ -162,6 +166,26 @@ internal class ManageStacksMenu : IMenu
 
     }
 
+    private void DeleteCard()
+    {
+        ConsoleHelper.ShowTitle("Delete a card");
+
+        CardShowDTO? selectedCardShowDTO = ShowCardsAndAskForSequence("Whats the card SEQUENCE to delete?");
+
+        if (selectedCardShowDTO != null)
+        {
+            bool result = CardDao.DeleteCard(selectedCardShowDTO.Id);
+
+            ConsoleHelper.ShowMessage(result ? "Card deleted successfully!" : "Something went wrong :(");
+            ConsoleHelper.PressAnyKeyToContinue();
+        }
+        else
+        {
+            ConsoleHelper.ShowMessage("No cards found.");
+            ConsoleHelper.PressAnyKeyToContinue();
+        }
+    }
+
     internal CardPromptDTO? PromptUserForCardData(CardShowDTO? defaultCardShowDTO = null)
     {
         string? front = ConsoleHelper.GetText(
@@ -197,5 +221,26 @@ internal class ManageStacksMenu : IMenu
         return null;
     }
 
+    internal CardShowDTO? ShowCardsAndAskForSequence(string message)
+    {
+        List<CardShowDTO> cards = CardDao.GetAllCardsFromStack(CurrentStack!.Id);
 
+        if (cards.Count <= 0)
+        {
+            return null;
+        }
+        else
+        {
+            foreach (CardShowDTO card in cards)
+            {
+                PrintCard(card);
+            }
+
+            ConsoleHelper.ShowMessage("");
+
+            int.TryParse(ConsoleHelper.GetText(message), out int id);
+
+            return cards.FirstOrDefault(stack => stack.Id == (id > 0 ? id : 0));
+        }
+    }
 }
