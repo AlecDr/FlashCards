@@ -325,9 +325,9 @@ internal abstract class ConsoleHelper
         return dateTime;
     }
 
-    internal static void ShowTitle(string message)
+    internal static void ShowTitle(string message, bool mustClearWindow = true)
     {
-        ShowMessage($"FlashCards - [underline blue]{message}[/]", true, true, false);
+        ShowMessage($"FlashCards - [underline blue]{message}[/]", true, mustClearWindow, false);
         ShowMessage("");
     }
 }

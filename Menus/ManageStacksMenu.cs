@@ -50,7 +50,6 @@ internal class ManageStacksMenu : IMenu
     {
         switch (option)
         {
-
             case '1':
                 CreateCard();
                 Run();
@@ -59,16 +58,18 @@ internal class ManageStacksMenu : IMenu
                 ListCards();
                 Run();
                 break;
+            case '3':
+                UpdateCard();
+                Run();
+                break;
             case '4':
                 DeleteCard();
                 Run();
                 break;
-
             case '5':
                 SelectCurrentStack();
                 Run();
                 break;
-
             case '6':
                 GoBack();
                 break;
@@ -89,7 +90,7 @@ internal class ManageStacksMenu : IMenu
         return [
             "1 - [blue]C[/]reate a card",
             "2 - [blue]L[/]ist all cards",
-            //"3 - [blue]U[/]pdate card",
+            "3 - [blue]U[/]pdate card",
             "4 - [blue]D[/]elete card",
             "5 - [blue]S[/]elect Stack",
             "6 - [blue]G[/]o back",
@@ -115,7 +116,7 @@ internal class ManageStacksMenu : IMenu
 
     private void CreateCard()
     {
-        ConsoleHelper.ShowTitle("Create an Card");
+        ConsoleHelper.ShowTitle("Create a Card");
 
         CardPromptDTO? cardPromptDTO = PromptUserForCardData();
 
@@ -138,14 +139,50 @@ internal class ManageStacksMenu : IMenu
         }
     }
 
+    private void UpdateCard()
+    {
+        ConsoleHelper.ShowTitle("Update a card");
+
+        CardShowDTO? selectedCardShowDTO = ShowCardsAndAskForSequence("Whats the card sequence to update?");
+
+        if (selectedCardShowDTO != null)
+        {
+            CardPromptDTO? cardPromptDTO = PromptUserForCardData(selectedCardShowDTO);
+
+            if (cardPromptDTO != null)
+            {
+                bool result = CardDao.UpdateCard(
+                   CardUpdateDTO.FromPromptDTO(
+                       selectedCardShowDTO.Id,
+                       CurrentStack!.Id,
+                       cardPromptDTO
+                   )
+               );
+
+                ConsoleHelper.ShowMessage(result ? "Card updated successfully!" : "Something went wrong :(");
+                ConsoleHelper.PressAnyKeyToContinue();
+            }
+            else
+            {
+                ConsoleHelper.ShowMessage("No data was provided, operation canceled by user!");
+                ConsoleHelper.PressAnyKeyToContinue();
+            }
+        }
+        else
+        {
+            ConsoleHelper.ShowMessage("No card found.");
+            ConsoleHelper.PressAnyKeyToContinue();
+        }
+    }
+
     internal static void PrintCard(CardShowDTO card)
     {
         ConsoleHelper.ShowMessage($"{card.Sequence} - [dodgerblue1] Front: {card.Front}[/] - [springgreen3] Back: {card.Back}[/]");
     }
 
-    private void ListCards()
+    private void ListCards(bool showPressAnyKeyToContinue = true, bool mustClearWindow = true)
     {
-        ConsoleHelper.ShowTitle("List of cards");
+        ConsoleHelper.ShowTitle("List of cards", mustClearWindow);
 
         List<CardShowDTO> cards = CardDao.GetAllCardsFromStack(CurrentStack!.Id);
 
@@ -156,12 +193,18 @@ internal class ManageStacksMenu : IMenu
                 PrintCard(card);
             }
 
-            ConsoleHelper.PressAnyKeyToContinue();
+            if (showPressAnyKeyToContinue)
+            {
+                ConsoleHelper.PressAnyKeyToContinue();
+            }
         }
         else
         {
-            ConsoleHelper.ShowMessage("No card found.");
-            ConsoleHelper.PressAnyKeyToContinue();
+            if (showPressAnyKeyToContinue)
+            {
+                ConsoleHelper.ShowMessage("No card found.");
+                ConsoleHelper.PressAnyKeyToContinue();
+            }
         }
 
     }
@@ -212,6 +255,8 @@ internal class ManageStacksMenu : IMenu
 
                 if (lastSequenceFromStack != null)
                 {
+                    ListCards(false, false);
+
                     int? promptSequence = ConsoleHelper.GetInteger(
                            "Whats the card sequence?",
                            defaultCardShowDTO != null ? defaultCardShowDTO.Sequence : recommendedSequence,
@@ -227,11 +272,29 @@ internal class ManageStacksMenu : IMenu
                     }
                 }
 
-                if (desiredSequence != recommendedSequence)
+                if (defaultCardShowDTO != null)
                 {
-                    // in this case we add 1 to all cards with sequence equal or bigger than this
-                    CardDao.Add1ToAllSequencesStartingFrom(desiredSequence, CurrentStack!.Id);
+                    if (desiredSequence != defaultCardShowDTO.Sequence)
+                    {
+                        if (desiredSequence < defaultCardShowDTO.Sequence)
+                        {
+                            CardDao.Add1ToAllSequencesStartingFrom(desiredSequence, CurrentStack!.Id, defaultCardShowDTO.Sequence);
+                        }
+                        else
+                        {
+                            CardDao.Subtract1ToAllSequencesStartingFrom(defaultCardShowDTO.Sequence, CurrentStack!.Id, desiredSequence);
+                        }
+                    }
                 }
+                else
+                {
+                    if (desiredSequence != recommendedSequence)
+                    {
+                        // in this case we add 1 to all cards with sequence equal or bigger than this
+                        CardDao.Add1ToAllSequencesStartingFrom(desiredSequence, CurrentStack!.Id);
+                    }
+                }
+
 
                 return new CardPromptDTO(front, back, desiredSequence);
             }
