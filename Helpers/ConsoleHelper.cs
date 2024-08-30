@@ -52,7 +52,7 @@ internal abstract class ConsoleHelper
                 AnsiConsole.Write(
             new FigletText(message)
                 .LeftJustified()
-                .Color(Color.Blue));
+                .Color(Color.SlateBlue1));
             }
             else
             {
@@ -60,7 +60,7 @@ internal abstract class ConsoleHelper
                 AnsiConsole.Write(
                 new FigletText(message)
                     .LeftJustified()
-                    .Color(Color.Blue));
+                    .Color(Color.SlateBlue1));
             }
         }
         else
@@ -280,10 +280,13 @@ internal abstract class ConsoleHelper
         int pageSize = 10,
         string moreChoicesText = "[grey](Move up and down to reveal more options)[/]")
     {
+        var highlightStyle = new Style().Foreground(Color.SlateBlue1);
+
         return AnsiConsole.Prompt(
             new SelectionPrompt<string>()
                 .Title(title)
                 .PageSize(pageSize)
+                .HighlightStyle(highlightStyle)
                 .MoreChoicesText(moreChoicesText)
                 .AddChoices(choices));
     }
@@ -350,7 +353,7 @@ internal abstract class ConsoleHelper
 
     internal static void ShowTitle(string message, bool mustClearWindow = true)
     {
-        ShowMessage($"FlashCards - [underline blue]{message}[/]", true, mustClearWindow, false);
+        ShowMessage($"FlashCards - [underline slateblue1]{message}[/]", true, mustClearWindow, false);
         ShowMessage("");
     }
 }

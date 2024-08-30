@@ -19,7 +19,7 @@ internal class ManageCardsMenu : IMenu
             SelectCurrentStack(true);
         }
 
-        string option = ConsoleHelper.GetOption($"Manage Stacks", GetMenuChoices(),
+        string option = ConsoleHelper.GetOption($"Manage Cards", GetMenuChoices(),
             $" - [underline greenyellow] {CurrentStack!.Id} - {CurrentStack!.Name} [/]");
 
         RouteToOption(option.ElementAt(0));
@@ -89,12 +89,12 @@ internal class ManageCardsMenu : IMenu
     public List<string> GetMenuChoices()
     {
         return [
-            "1 - [blue]C[/]reate a Card",
-            "2 - [blue]L[/]ist All Cards",
-            "3 - [blue]U[/]pdate Card",
-            "4 - [blue]D[/]elete Card",
-            "5 - [blue]S[/]elect Stack",
-            "6 - [blue]M[/]ain Menu",
+            "1 - [slateblue1]C[/]reate a Card",
+            "2 - [slateblue1]L[/]ist All Cards",
+            "3 - [slateblue1]U[/]pdate Card",
+            "4 - [slateblue1]D[/]elete Card",
+            "5 - [slateblue1]S[/]elect Stack",
+            "6 - [slateblue1]M[/]ain Menu",
             ];
     }
 

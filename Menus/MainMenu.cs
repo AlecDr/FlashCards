@@ -39,9 +39,9 @@ internal class MainMenu : IMenu
     public List<string> GetMenuChoices()
     {
         return [
-        "1 - [blue]M[/]anage Stacks",
-        "2 - [blue]M[/]anage Cards",
-        "3 - [blue]C[/]hange User",
+        "1 - [slateblue1]M[/]anage Stacks",
+        "2 - [slateblue1]M[/]anage Cards",
+        "3 - [slateblue1]C[/]hange User",
         ];
     }
 

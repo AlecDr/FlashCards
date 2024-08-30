@@ -49,11 +49,11 @@ internal class ManageStacksMenu : IMenu
     public List<string> GetMenuChoices()
     {
         return [
-            "1 - [blue]C[/]reate a stack",
-            "2 - [blue]L[/]ist all stacks",
-            "3 - [blue]U[/]pdate stack",
-            "4 - [blue]D[/]elete stack",
-            "5 - [blue]M[/]ain Menu",
+            "1 - [slateblue1 slowblink]C[/]reate a stack",
+            "2 - [slateblue1 slowblink]L[/]ist all stacks",
+            "3 - [slateblue1 slowblink]U[/]pdate stack",
+            "4 - [slateblue1 slowblink]D[/]elete stack",
+            "5 - [slateblue1 slowblink]M[/]ain Menu",
             ];
     }
 

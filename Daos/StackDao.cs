@@ -68,6 +68,12 @@ internal abstract class StackDao
         {
             DatabaseHelper.SqliteConnection!.Open();
 
+            string deleteCardsQuery = "DELETE FROM CARDS WHERE stack_id = @StackId;";
+            DatabaseHelper.SqliteConnection.Execute(deleteCardsQuery, new
+            {
+                StackId = id,
+            });
+
             string query = "DELETE FROM STACKS WHERE id = @Id and username = @Username;";
             DatabaseHelper.SqliteConnection.Execute(query, new
             {

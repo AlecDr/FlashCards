@@ -34,7 +34,7 @@ internal abstract class FlashCardsHelper
     {
         ConsoleHelper.ShowTitle("User Selection");
 
-        string? name = ConsoleHelper.GetText("What is your [blue]name[/]? ");
+        string? name = ConsoleHelper.GetText("What is your [slateblue1]name[/]? ");
 
         if (name != null && name.Trim().Length > 0)
         {
