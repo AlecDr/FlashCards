@@ -1,5 +1,4 @@
 ﻿using FlashCards.Daos;
-using FlashCards.Dtos.Card;
 using FlashCards.Dtos.Stack;
 using FlashCards.Helpers;
 using FlashCards.Menus.Interfaces;
@@ -8,42 +7,13 @@ namespace FlashCards.Menus;
 
 internal class ManageStacksMenu : IMenu
 {
-    private StackShowDTO? CurrentStack;
-
     public void Run()
     {
         ConsoleHelper.ClearWindow();
 
-        while (CurrentStack == null)
-        {
-            SelectCurrentStack(true);
-        }
-
-        string option = GetOption();
+        string option = ConsoleHelper.GetOption("Manage Stacks Menu", GetMenuChoices());
 
         RouteToOption(option.ElementAt(0));
-    }
-
-    void SelectCurrentStack(bool goBackOnWrongSelection = false)
-    {
-        StackShowDTO? selectedStackShowDTO = MainMenu.ShowStacksAndAskForId("Whats the stack ID to manage?");
-
-        if (selectedStackShowDTO != null)
-        {
-            CurrentStack = selectedStackShowDTO;
-        }
-        else
-        {
-            if (goBackOnWrongSelection)
-            {
-                ConsoleHelper.PressAnyKeyToContinue("No stack found, going back to main menu");
-                GoBack();
-            }
-            else
-            {
-                SelectCurrentStack(false);
-            }
-        }
     }
 
     public void RouteToOption(char option)
@@ -51,27 +21,23 @@ internal class ManageStacksMenu : IMenu
         switch (option)
         {
             case '1':
-                CreateCard();
+                CreateStack();
                 Run();
                 break;
             case '2':
-                ListCards();
+                ListStacks();
                 Run();
                 break;
             case '3':
-                UpdateCard();
+                UpdateStack();
                 Run();
                 break;
             case '4':
-                DeleteCard();
+                DeleteStack();
                 Run();
                 break;
             case '5':
-                SelectCurrentStack();
-                Run();
-                break;
-            case '6':
-                GoBack();
+                MainMenu();
                 break;
 
             default:
@@ -80,56 +46,33 @@ internal class ManageStacksMenu : IMenu
         }
     }
 
-    internal void GoBack()
-    {
-        FlashCardsHelper.ChangeMenu(new MainMenu());
-    }
-
     public List<string> GetMenuChoices()
     {
         return [
-            "1 - [blue]C[/]reate a card",
-            "2 - [blue]L[/]ist all cards",
-            "3 - [blue]U[/]pdate card",
-            "4 - [blue]D[/]elete card",
-            "5 - [blue]S[/]elect Stack",
-            "6 - [blue]G[/]o back",
+            "1 - [blue]C[/]reate a stack",
+            "2 - [blue]L[/]ist all stacks",
+            "3 - [blue]U[/]pdate stack",
+            "4 - [blue]D[/]elete stack",
+            "5 - [blue]M[/]ain Menu",
             ];
     }
 
-    public string GetOption()
+    private void CreateStack()
     {
-        string option = ConsoleHelper.ShowMenu(
-            FlashCardsHelper.CurrentUser!,
-            GetMenuChoices(),
-            $"Manage Stacks",
-            $" - [underline greenyellow] {CurrentStack!.Id} - {CurrentStack!.Name} [/]");
+        ConsoleHelper.ShowTitle("Create an Stack");
 
-        while (option == null || option.Trim() == "")
+        StackPromptDTO? stackPromptDTO = PromptUserForStackData();
+
+        if (stackPromptDTO != null)
         {
-            ConsoleHelper.ClearWindow();
-            GetOption();
-        }
-
-        return option;
-    }
-
-    private void CreateCard()
-    {
-        ConsoleHelper.ShowTitle("Create a Card");
-
-        CardPromptDTO? cardPromptDTO = PromptUserForCardData();
-
-        if (cardPromptDTO != null)
-        {
-            CardDao.StoreCardDapper(
-                CardStoreDTO.FromPromptDTO(
-                    CurrentStack!.Id,
-                    cardPromptDTO
+            StackDao.StoreStack(
+                StackStoreDTO.FromPromptDTO(
+                    FlashCardsHelper.CurrentUser!,
+                    stackPromptDTO
                 )
             );
 
-            ConsoleHelper.ShowMessage("Card stored successfully!");
+            ConsoleHelper.ShowMessage("Stack stored successfully!");
             ConsoleHelper.PressAnyKeyToContinue();
         }
         else
@@ -139,27 +82,27 @@ internal class ManageStacksMenu : IMenu
         }
     }
 
-    private void UpdateCard()
+    private void UpdateStack()
     {
-        ConsoleHelper.ShowTitle("Update a card");
+        ConsoleHelper.ShowTitle("Update an stack");
 
-        CardShowDTO? selectedCardShowDTO = ShowCardsAndAskForSequence("Whats the card sequence to update?");
+        StackShowDTO? selectedStackShowDTO = ShowStacksAndAskForId("Whats the stack ID to update?");
 
-        if (selectedCardShowDTO != null)
+        if (selectedStackShowDTO != null)
         {
-            CardPromptDTO? cardPromptDTO = PromptUserForCardData(selectedCardShowDTO);
+            StackPromptDTO? stackPromptDTO = PromptUserForStackData(selectedStackShowDTO);
 
-            if (cardPromptDTO != null)
+            if (stackPromptDTO != null)
             {
-                bool result = CardDao.UpdateCard(
-                   CardUpdateDTO.FromPromptDTO(
-                       selectedCardShowDTO.Id,
-                       CurrentStack!.Id,
-                       cardPromptDTO
+                bool result = StackDao.UpdateStack(
+                   StackUpdateDTO.FromPromptDTO(
+                       selectedStackShowDTO.Id,
+                       FlashCardsHelper.CurrentUser!,
+                       stackPromptDTO
                    )
                );
 
-                ConsoleHelper.ShowMessage(result ? "Card updated successfully!" : "Something went wrong :(");
+                ConsoleHelper.ShowMessage(result ? "Stack updated successfully!" : "Something went wrong :(");
                 ConsoleHelper.PressAnyKeyToContinue();
             }
             else
@@ -170,159 +113,117 @@ internal class ManageStacksMenu : IMenu
         }
         else
         {
-            ConsoleHelper.ShowMessage("No card found.");
+            ConsoleHelper.ShowMessage("No stack found.");
             ConsoleHelper.PressAnyKeyToContinue();
         }
     }
 
-    internal static void PrintCard(CardShowDTO card)
+    private void ManageStacks()
     {
-        ConsoleHelper.ShowMessage($"{card.Sequence} - [dodgerblue1] Front: {card.Front}[/] - [springgreen3] Back: {card.Back}[/]");
-    }
+        List<StackShowDTO> stacks = StackDao.GetAllStacks(FlashCardsHelper.CurrentUser!);
 
-    private void ListCards(bool showPressAnyKeyToContinue = true, bool mustClearWindow = true)
-    {
-        ConsoleHelper.ShowTitle("List of cards", mustClearWindow);
-
-        List<CardShowDTO> cards = CardDao.GetAllCardsFromStack(CurrentStack!.Id);
-
-        if (cards.Count() > 0)
+        if (stacks.Count > 0)
         {
-            foreach (CardShowDTO card in cards)
-            {
-                PrintCard(card);
-            }
-
-            if (showPressAnyKeyToContinue)
-            {
-                ConsoleHelper.PressAnyKeyToContinue();
-            }
+            FlashCardsHelper.ChangeMenu(new ManageCardsMenu());
         }
         else
         {
-            if (showPressAnyKeyToContinue)
-            {
-                ConsoleHelper.ShowMessage("No card found.");
-                ConsoleHelper.PressAnyKeyToContinue();
-            }
+            ConsoleHelper.PressAnyKeyToContinue("You must create a stack before going to the manage stacks menu!");
+            Run();
         }
-
     }
 
-    private void DeleteCard()
+    private void DeleteStack()
     {
-        ConsoleHelper.ShowTitle("Delete a card");
+        ConsoleHelper.ShowTitle("Delete a stack");
 
-        CardShowDTO? selectedCardShowDTO = ShowCardsAndAskForSequence("Whats the card SEQUENCE to delete?");
+        StackShowDTO? selectedStackShowDTO = ShowStacksAndAskForId("Whats the stack ID to delete?");
 
-        if (selectedCardShowDTO != null)
+        if (selectedStackShowDTO != null)
         {
-            bool result = CardDao.DeleteCard(selectedCardShowDTO.Id);
+            bool result = StackDao.DeleteStack(selectedStackShowDTO.Id, FlashCardsHelper.CurrentUser!);
 
-            ConsoleHelper.ShowMessage(result ? "Card deleted successfully!" : "Something went wrong :(");
+            ConsoleHelper.ShowMessage(result ? "Stack deleted successfully!" : "Something went wrong :(");
             ConsoleHelper.PressAnyKeyToContinue();
         }
         else
         {
-            ConsoleHelper.ShowMessage("No cards found.");
+            ConsoleHelper.ShowMessage("No stacks found.");
             ConsoleHelper.PressAnyKeyToContinue();
         }
     }
 
-    internal CardPromptDTO? PromptUserForCardData(CardShowDTO? defaultCardShowDTO = null)
+    internal void MainMenu()
     {
-        string? front = ConsoleHelper.GetText(
-            "Whats the card front text?",
-            defaultCardShowDTO != null ? defaultCardShowDTO.Front : null,
-            true,
-            true, 2
-        );
-
-        if (front != null)
-        {
-            string? back = ConsoleHelper.GetText(
-                "Whats the card back text?",
-                defaultCardShowDTO != null ? defaultCardShowDTO.Back : null,
-                true,
-                true, 2
-            );
-
-            if (back != null)
-            {
-                int? lastSequenceFromStack = StackDao.GetLastSequenceFromStack(CurrentStack!.Id);
-                int recommendedSequence = lastSequenceFromStack != null ? lastSequenceFromStack.Value + 1 : 1;
-                int desiredSequence = 1;
-
-                if (lastSequenceFromStack != null)
-                {
-                    ListCards(false, false);
-
-                    int? promptSequence = ConsoleHelper.GetInteger(
-                           "Whats the card sequence?",
-                           defaultCardShowDTO != null ? defaultCardShowDTO.Sequence : recommendedSequence,
-                           true,
-                           true,
-                           1,
-                           recommendedSequence
-                       );
-
-                    if (promptSequence != null)
-                    {
-                        desiredSequence = promptSequence.Value;
-                    }
-                }
-
-                if (defaultCardShowDTO != null)
-                {
-                    if (desiredSequence != defaultCardShowDTO.Sequence)
-                    {
-                        if (desiredSequence < defaultCardShowDTO.Sequence)
-                        {
-                            CardDao.Add1ToAllSequencesStartingFrom(desiredSequence, CurrentStack!.Id, defaultCardShowDTO.Sequence);
-                        }
-                        else
-                        {
-                            CardDao.Subtract1ToAllSequencesStartingFrom(defaultCardShowDTO.Sequence, CurrentStack!.Id, desiredSequence);
-                        }
-                    }
-                }
-                else
-                {
-                    if (desiredSequence != recommendedSequence)
-                    {
-                        // in this case we add 1 to all cards with sequence equal or bigger than this
-                        CardDao.Add1ToAllSequencesStartingFrom(desiredSequence, CurrentStack!.Id);
-                    }
-                }
-
-
-                return new CardPromptDTO(front, back, desiredSequence);
-            }
-        }
-
-        return null;
+        FlashCardsHelper.ChangeMenu(new MainMenu());
     }
 
-    internal CardShowDTO? ShowCardsAndAskForSequence(string message)
+    internal static void PrintStack(StackShowDTO stack)
     {
-        List<CardShowDTO> cards = CardDao.GetAllCardsFromStack(CurrentStack!.Id);
+        ConsoleHelper.ShowMessage($"{stack.Id} - {stack.Name}");
+    }
 
-        if (cards.Count <= 0)
+    private void ListStacks()
+    {
+        ConsoleHelper.ShowTitle("List of stacks");
+
+        List<StackShowDTO> stacks = StackDao.GetAllStacks(FlashCardsHelper.CurrentUser!);
+
+        if (stacks.Count() > 0)
+        {
+            foreach (StackShowDTO stack in stacks)
+            {
+                PrintStack(stack);
+            }
+
+            ConsoleHelper.PressAnyKeyToContinue();
+        }
+        else
+        {
+            ConsoleHelper.ShowMessage("No stack found.");
+            ConsoleHelper.PressAnyKeyToContinue();
+        }
+
+    }
+
+    internal static StackShowDTO? ShowStacksAndAskForId(string message)
+    {
+        List<StackShowDTO> stacks = StackDao.GetAllStacks(FlashCardsHelper.CurrentUser!);
+
+        if (stacks.Count <= 0)
         {
             return null;
         }
         else
         {
-            foreach (CardShowDTO card in cards)
+            foreach (StackShowDTO stack in stacks)
             {
-                PrintCard(card);
+                PrintStack(stack);
             }
 
             ConsoleHelper.ShowMessage("");
 
-            int.TryParse(ConsoleHelper.GetText(message), out int sequence);
+            int.TryParse(ConsoleHelper.GetText(message), out int id);
 
-            return cards.FirstOrDefault(stack => stack.Sequence == (sequence > 0 ? sequence : 0));
+            return stacks.FirstOrDefault(stack => stack.Id == (id > 0 ? id : 0));
         }
+    }
+
+    internal static StackPromptDTO? PromptUserForStackData(StackShowDTO? defaultStackShowDTO = null)
+    {
+        string? name = ConsoleHelper.GetText(
+            "Whats the stack name?",
+            defaultStackShowDTO != null ? defaultStackShowDTO.Name : null,
+            true,
+            true, 2
+        );
+
+        if (name != null)
+        {
+            return new StackPromptDTO(name);
+        }
+
+
+        return null;
     }
 }

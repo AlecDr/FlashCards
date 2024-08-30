@@ -5,6 +5,19 @@ namespace FlashCards.Helpers;
 
 internal abstract class ConsoleHelper
 {
+    internal static string GetOption(string menuTitle, List<string> menuChoices, string? menuSubtitle = null)
+    {
+        string option = ShowMenu(FlashCardsHelper.CurrentUser!, menuChoices, menuTitle, menuSubtitle);
+
+        while (option == null || option.Trim() == "")
+        {
+            ClearWindow();
+            GetOption(menuTitle, menuChoices);
+        }
+
+        return option;
+    }
+
     internal static string ShowMenu(string username, List<string> menuChoices, string menuTitle, string? menuSubTitle = null)
     {
         ShowMessage($"FlashCards - [steelblue1] {username} [/] - [underline darkslategray2]{menuTitle}[/] {menuSubTitle ?? ""}", true, true, false);
@@ -216,6 +229,16 @@ internal abstract class ConsoleHelper
                 ConsoleKey.NumPad7,
                 ConsoleKey.NumPad8,
                 ConsoleKey.NumPad9,
+                ConsoleKey.D0,
+                ConsoleKey.D1,
+                ConsoleKey.D2,
+                ConsoleKey.D3,
+                ConsoleKey.D4,
+                ConsoleKey.D5,
+                ConsoleKey.D6,
+                ConsoleKey.D7,
+                ConsoleKey.D8,
+                ConsoleKey.D9,
                 ]).Contains(key))
             {
                 input += keyInfo.KeyChar;

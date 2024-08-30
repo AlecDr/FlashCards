@@ -7,6 +7,4 @@ internal interface IMenu
     List<string> GetMenuChoices();
 
     void RouteToOption(char option);
-
-    string GetOption();
 }
