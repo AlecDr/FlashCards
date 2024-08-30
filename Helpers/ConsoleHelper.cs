@@ -153,6 +153,104 @@ internal abstract class ConsoleHelper
         return input;
     }
 
+    internal static int? GetInteger(
+        string message,
+        int? defaultValue = null,
+        bool canCancel = false,
+        bool shouldValidate = false,
+        int minValue = 1,
+        int maxValue = 255
+    )
+    {
+        ConsoleKey key;
+        string input = defaultValue != null ? defaultValue.Value.ToString() : string.Empty;
+        bool continueReading = true;
+
+        if (canCancel)
+        {
+            // Inform the user about cancellation option
+            AnsiConsole.MarkupLine("[grey](Press Esc to cancel)[/]");
+        }
+
+        if (shouldValidate)
+        {
+            AnsiConsole.MarkupLine($"\n[red](Input must have a minimum value of {minValue} and a maximum value of {maxValue})[/]");
+        }
+
+        // Begin the prompt
+        AnsiConsole.Markup($"[bold]{message}[/] ");
+
+        if (input.Length > 0)
+        {
+            Console.Write(input);
+        }
+
+        // Read user input, one key at a time
+        do
+        {
+            var keyInfo = Console.ReadKey(intercept: true);
+            key = keyInfo.Key;
+
+            // Handle Escape key
+            if (key == ConsoleKey.Escape && canCancel)
+            {
+                AnsiConsole.MarkupLine("\n[red]Input cancelled.[/]");
+                return null;  // Or throw an exception if you want to handle it elsewhere
+            }
+
+            // Handle Backspace key
+            if (key == ConsoleKey.Backspace && input.Length > 0)
+            {
+                input = input[..^1];
+                Console.Write("\b \b");  // Erase the last character on the console
+            }
+            // Handle standard keys
+            else if (key != ConsoleKey.Enter && key != ConsoleKey.Backspace && new List<ConsoleKey>([
+                ConsoleKey.NumPad0,
+                ConsoleKey.NumPad1,
+                ConsoleKey.NumPad2,
+                ConsoleKey.NumPad3,
+                ConsoleKey.NumPad4,
+                ConsoleKey.NumPad5,
+                ConsoleKey.NumPad6,
+                ConsoleKey.NumPad7,
+                ConsoleKey.NumPad8,
+                ConsoleKey.NumPad9,
+                ]).Contains(key))
+            {
+                input += keyInfo.KeyChar;
+                Console.Write(keyInfo.KeyChar);  // Show the character
+            }
+
+            if (key == ConsoleKey.Enter)
+            {
+                bool valid = true;
+
+                if (shouldValidate)
+                {
+                    valid = false;
+
+                    string? validationMessage = ValidationHelper.ValidateRequiredInteger(input, minValue, maxValue);
+
+                    if (validationMessage == null)
+                    {
+                        valid = true;
+                    }
+                }
+
+                if (valid)
+                {
+                    continueReading = false;
+                }
+            }
+
+        } while (continueReading);
+
+        AnsiConsole.WriteLine(); // Move to the next line after Enter is pressed
+
+        return int.Parse(input);
+    }
+
     internal static string GetChoice(
         List<string> choices,
         string title,

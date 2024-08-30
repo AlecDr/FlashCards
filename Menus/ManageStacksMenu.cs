@@ -207,14 +207,33 @@ internal class ManageStacksMenu : IMenu
             if (back != null)
             {
                 int? lastSequenceFromStack = StackDao.GetLastSequenceFromStack(CurrentStack!.Id);
-                int sequence = 1;
+                int recommendedSequence = lastSequenceFromStack != null ? lastSequenceFromStack.Value + 1 : 1;
+                int desiredSequence = 1;
 
                 if (lastSequenceFromStack != null)
                 {
-                    sequence = lastSequenceFromStack.Value + 1;
+                    int? promptSequence = ConsoleHelper.GetInteger(
+                           "Whats the card sequence?",
+                           defaultCardShowDTO != null ? defaultCardShowDTO.Sequence : recommendedSequence,
+                           true,
+                           true,
+                           1,
+                           recommendedSequence
+                       );
+
+                    if (promptSequence != null)
+                    {
+                        desiredSequence = promptSequence.Value;
+                    }
                 }
 
-                return new CardPromptDTO(front, back, sequence);
+                if (desiredSequence != recommendedSequence)
+                {
+                    // in this case we add 1 to all cards with sequence equal or bigger than this
+                    CardDao.Add1ToAllSequencesStartingFrom(desiredSequence, CurrentStack!.Id);
+                }
+
+                return new CardPromptDTO(front, back, desiredSequence);
             }
         }
 
@@ -238,9 +257,9 @@ internal class ManageStacksMenu : IMenu
 
             ConsoleHelper.ShowMessage("");
 
-            int.TryParse(ConsoleHelper.GetText(message), out int id);
+            int.TryParse(ConsoleHelper.GetText(message), out int sequence);
 
-            return cards.FirstOrDefault(stack => stack.Id == (id > 0 ? id : 0));
+            return cards.FirstOrDefault(stack => stack.Sequence == (sequence > 0 ? sequence : 0));
         }
     }
 }

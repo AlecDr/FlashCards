@@ -63,4 +63,15 @@ internal abstract class CardDao
 
         return false;
     }
+
+    internal static void Add1ToAllSequencesStartingFrom(int fromSequence, int stackId)
+    {
+        DatabaseHelper.SqliteConnection!.Open();
+
+        string command = "UPDATE CARDS SET SEQUENCE = SEQUENCE + 1 WHERE stack_id = @StackId AND sequence >= @FromSequence;";
+
+        DatabaseHelper.SqliteConnection.Execute(command, new { FromSequence = fromSequence, StackId = stackId });
+
+        DatabaseHelper.SqliteConnection!.Close();
+    }
 }
