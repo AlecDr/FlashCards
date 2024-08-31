@@ -1,4 +1,6 @@
-﻿using FlashCards.Dtos.Stack;
+﻿using FlashCards.Daos;
+using FlashCards.Dtos.Card;
+using FlashCards.Dtos.Stack;
 using FlashCards.Helpers;
 using FlashCards.Menus.Interfaces;
 
@@ -50,7 +52,7 @@ internal class StudySessionsMenu : IMenu
         switch (option)
         {
             case '1':
-                //StudyCard();
+                StudyCard();
                 Run();
                 break;
             case '2':
@@ -79,5 +81,17 @@ internal class StudySessionsMenu : IMenu
             "2 - [slateblue1]S[/]elect Stack",
             "3 - [slateblue1]M[/]ain Menu",
             ];
+    }
+
+    private void StudyCard()
+    {
+        List<CardShowDTO> cards = CardDao.GetAllCardsFromStack(CurrentStack!.Id);
+
+        if (cards.Count > 0) { }
+        else
+        {
+            ConsoleHelper.ShowMessage("This stack have 0 cards, you must create at least one card to be able to study it!");
+            ConsoleHelper.PressAnyKeyToContinue();
+        }
     }
 }
