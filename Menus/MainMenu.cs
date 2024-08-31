@@ -85,11 +85,11 @@ internal class MainMenu : IMenu
 
         if (stacks.Count > 0)
         {
-            FlashCardsHelper.ChangeMenu(new ManageCardsMenu());
+            FlashCardsHelper.ChangeMenu(new StudySessionsMenu());
         }
         else
         {
-            ConsoleHelper.PressAnyKeyToContinue("You must create a stack before going to the manage cards menu!");
+            ConsoleHelper.PressAnyKeyToContinue("You must create a stack before going to the study sessions menu!");
             Run();
         }
     }
