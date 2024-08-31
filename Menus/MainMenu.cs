@@ -27,6 +27,9 @@ internal class MainMenu : IMenu
                 ManageCards();
                 break;
             case '3':
+                StudySessions();
+                break;
+            case '4':
                 FlashCardsHelper.AskName();
                 Run();
                 break;
@@ -41,7 +44,8 @@ internal class MainMenu : IMenu
         return [
         "1 - [slateblue1]M[/]anage Stacks",
         "2 - [slateblue1]M[/]anage Cards",
-        "3 - [slateblue1]C[/]hange User",
+        "3 - [slateblue1]S[/]tudy Sessions",
+        "4 - [slateblue1]C[/]hange User",
         ];
     }
 
@@ -61,6 +65,21 @@ internal class MainMenu : IMenu
     }
 
     private void ManageCards()
+    {
+        List<StackShowDTO> stacks = StackDao.GetAllStacks(FlashCardsHelper.CurrentUser!);
+
+        if (stacks.Count > 0)
+        {
+            FlashCardsHelper.ChangeMenu(new ManageCardsMenu());
+        }
+        else
+        {
+            ConsoleHelper.PressAnyKeyToContinue("You must create a stack before going to the manage cards menu!");
+            Run();
+        }
+    }
+
+    private void StudySessions()
     {
         List<StackShowDTO> stacks = StackDao.GetAllStacks(FlashCardsHelper.CurrentUser!);
 

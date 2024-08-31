@@ -94,6 +94,30 @@ internal abstract class DatabaseHelper
             ";
         command.ExecuteNonQuery();
 
+        // study sessions table
+        command = CreateCommand();
+
+        command.CommandText = @"
+            IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'STUDY_SESIONS' AND schema_id = SCHEMA_ID('dbo'))
+            BEGIN
+                CREATE TABLE STUDY_SESSSIONS
+                    (id INT NOT NULL IDENTITY(1,1) PRIMARY KEY, username VARCHAR(255) NOT NULL, started_at DATETIME NOT NULL, finished_at DATETIME, stack_id INT NOT NULL, FOREIGN KEY (stack_id) REFERENCES STACKS(id));
+            END;
+            ";
+        command.ExecuteNonQuery();
+
+        // study sessions answers table
+        command = CreateCommand();
+
+        command.CommandText = @"
+            IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'STUDY_SESIONS_ANSWERS' AND schema_id = SCHEMA_ID('dbo'))
+            BEGIN
+                CREATE TABLE STUDY_SESIONS_ANSWERS
+                    (id INT NOT NULL IDENTITY(1,1) PRIMARY KEY, answer VARCHAR(255), card_id INT NOT NULL, points INT, FOREIGN KEY (card_id) REFERENCES CARDS(ID));
+            END;
+            ";
+        command.ExecuteNonQuery();
+
         _sqliteConnection.Close();
     }
 }
