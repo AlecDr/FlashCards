@@ -3,8 +3,8 @@
 internal class CardShowDTO
 {
     internal int Id { get; }
-    internal string? Front { get; }
-    internal string? Back { get; }
+    internal string Front { get; }
+    internal string Back { get; }
     internal int StackId { get; }
     internal int Sequence { get; }
 

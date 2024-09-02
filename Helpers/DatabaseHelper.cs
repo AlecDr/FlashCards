@@ -101,7 +101,7 @@ internal abstract class DatabaseHelper
             IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'STUDY_SESSIONS' AND schema_id = SCHEMA_ID('dbo'))
             BEGIN
                 CREATE TABLE STUDY_SESSIONS
-                    (id INT NOT NULL IDENTITY(1,1) PRIMARY KEY, username VARCHAR(255) NOT NULL, started_at DATETIME NOT NULL, finished_at DATETIME, stack_id INT NOT NULL, FOREIGN KEY (stack_id) REFERENCES STACKS(id));
+                    (id INT NOT NULL IDENTITY(1,1) PRIMARY KEY, started_at DATETIME NOT NULL, finished_at DATETIME, stack_id INT NOT NULL, FOREIGN KEY (stack_id) REFERENCES STACKS(id));
             END;
             ";
         command.ExecuteNonQuery();
