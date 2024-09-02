@@ -79,7 +79,7 @@ internal class StudySessionsMenu : IMenu
     public List<string> GetMenuChoices()
     {
         return [
-            "1 - [slateblue1]S[/]udy Stack",
+            "1 - [slateblue1]S[/]tudy Stack",
             "2 - [slateblue1]S[/]elect Stack",
             "3 - [slateblue1]M[/]ain Menu",
             ];
