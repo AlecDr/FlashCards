@@ -1,6 +1,7 @@
 ﻿using FlashCards.Daos;
 using FlashCards.Dtos.Card;
 using FlashCards.Dtos.Stack;
+using FlashCards.Dtos.StudySession;
 using FlashCards.Dtos.StudySessionAnswer;
 using FlashCards.Helpers;
 using FlashCards.Menus.Interfaces;
@@ -90,35 +91,52 @@ internal class StudySessionsMenu : IMenu
         AnsiConsole.Write(
             new Panel(new Text(showFront ? card.Front : card.Back))
                 .RoundedBorder()
-                .Header("[blue]FRONT[/]")
+                .Header($"[blue]{(showFront ? "FRONT" : "BACK")}[/]")
                 .HeaderAlignment(Justify.Center));
     }
 
     private void StudyStack()
     {
         List<CardShowDTO> cards = CardDao.GetAllCardsFromStack(CurrentStack!.Id);
-
         if (cards.Count > 0)
         {
             // start study session
-            StudySessionDao.StoreStudySession(new StudySessionStoreDTO(CurrentStack!.Id, DateTime.Now));
+            StudySessionShowDTO? studySession = StudySessionDao.StoreStudySession(new StudySessionStoreDTO(CurrentStack!.Id, DateTime.Now));
+            List<StudySessionAnswerPromptDTO> answeredCards = [];
 
-            for (global::System.Int32 i = 0; i < cards.Count; i++)
+            if (studySession != null)
             {
-                CardShowDTO card = cards[i];
 
-                // for each card, show it and ask for the answer
-                StudySessionAnswerPromptDTO? studySessionAnswerPromptDTO = ShowCardAndAskForAnswer(card);
+                for (global::System.Int32 i = 0; i < cards.Count; i++)
+                {
+                    CardShowDTO card = cards[i];
 
-                if (studySessionAnswerPromptDTO != null)
-                {
-                    StudySessionAnswerDao.StoreStudySessionAnswer(StudySessionAnswerStoreDTO.FromPromptDTO(card.Id, studySessionAnswerPromptDTO));
+                    // for each card, show it and ask for the answer
+                    StudySessionAnswerPromptDTO? studySessionAnswerPromptDTO = ShowCardAndAskForAnswer(card);
+
+                    if (studySessionAnswerPromptDTO != null)
+                    {
+                        answeredCards.Add(studySessionAnswerPromptDTO);
+                        StudySessionAnswerDao.StoreStudySessionAnswer(StudySessionAnswerStoreDTO.FromPromptDTO(card.Id, studySessionAnswerPromptDTO));
+                    }
+                    else
+                    {
+                        // if the user refused to answer, we finish this study session
+                        i = cards.Count;
+                    }
                 }
-                else
-                {
-                    // if the user refused to answer, we finish this study session
-                    i = cards.Count;
-                }
+
+                // update the study session to finish it
+                StudySessionDao.UpdateStudySession(new StudySessionUpdateDTO(studySession.Id, studySession.StackId, studySession.StartedAt, DateTime.Now));
+
+                int totalPoints = answeredCards.Sum(x => x.Points);
+
+                // show the total points
+                ConsoleHelper.ShowMessage($"The study session ended, you computed {totalPoints} points.");
+            }
+            else
+            {
+                ConsoleHelper.ShowMessage($"Something went wrong and we could not start the study session.");
             }
         }
         else
@@ -128,11 +146,14 @@ internal class StudySessionsMenu : IMenu
         }
     }
 
-    private StudySessionAnswerPromptDTO? ShowCardAndAskForAnswer(CardShowDTO card)
+    private StudySessionAnswerPromptDTO? ShowCardAndAskForAnswer(CardShowDTO card, bool hasNextCard = true)
     {
         ShowCardAsPanel(card);
 
         string? answer = ConsoleHelper.GetText("What is the answer for this card?");
+
+        ShowCardAsPanel(card, false);
+
 
         if (answer != null)
         {
@@ -141,6 +162,16 @@ internal class StudySessionsMenu : IMenu
             if (answer.ToLower().Trim() == card.Back.ToLower().Trim())
             {
                 points = 1;
+                ConsoleHelper.ShowMessage("Your answer is correct!");
+            }
+            else
+            {
+                ConsoleHelper.ShowMessage("Your answer is not correct :(");
+            }
+
+            if (hasNextCard)
+            {
+                ConsoleHelper.PressAnyKeyToContinue("Press any key to go to the next card");
             }
 
             return new StudySessionAnswerPromptDTO(answer, points);
