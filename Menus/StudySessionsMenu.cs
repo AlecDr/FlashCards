@@ -117,7 +117,7 @@ internal class StudySessionsMenu : IMenu
                     if (studySessionAnswerPromptDTO != null)
                     {
                         answeredCards.Add(studySessionAnswerPromptDTO);
-                        StudySessionAnswerDao.StoreStudySessionAnswer(StudySessionAnswerStoreDTO.FromPromptDTO(card.Id, studySessionAnswerPromptDTO));
+                        StudySessionAnswerDao.StoreStudySessionAnswer(StudySessionAnswerStoreDTO.FromPromptDTO(card.Id, studySession.Id, studySessionAnswerPromptDTO));
                     }
                     else
                     {

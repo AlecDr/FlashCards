@@ -201,7 +201,7 @@ internal class ManageCardsMenu : IMenu
 
         if (selectedCardShowDTO != null)
         {
-            bool result = CardDao.DeleteCard(selectedCardShowDTO.Id);
+            bool result = CardDao.DeleteCardById(selectedCardShowDTO.Id);
 
             ConsoleHelper.ShowMessage(result ? "Card deleted successfully!" : "Something went wrong :(");
             ConsoleHelper.PressAnyKeyToContinue();

@@ -60,12 +60,14 @@ internal abstract class CardDao
         return cards;
     }
 
-    internal static bool DeleteCard(int id)
+    internal static bool DeleteCardById(int id)
     {
         CardShowDTO? card = FindCard(id);
 
         if (card != null)
         {
+            StudySessionAnswerDao.DeleteStudySessionAnswersByCardId(card.Id);
+
             DatabaseHelper.SqliteConnection!.Open();
 
             string query = "DELETE FROM CARDS WHERE id = @Id;";
@@ -76,6 +78,23 @@ internal abstract class CardDao
             });
 
             DatabaseHelper.SqliteConnection!.Close();
+
+            return true;
+        }
+
+        return false;
+    }
+
+    internal static bool DeleteCardByStackId(int stackId)
+    {
+        List<CardShowDTO> cards = GetAllCardsFromStack(stackId);
+
+        if (cards.Count > 0)
+        {
+            foreach (CardShowDTO card in cards)
+            {
+                DeleteCardById(card.Id);
+            }
 
             return true;
         }

@@ -51,17 +51,7 @@ internal class MainMenu : IMenu
 
     private void ManageStacks()
     {
-        List<StackShowDTO> stacks = StackDao.GetAllStacks(FlashCardsHelper.CurrentUser!);
-
-        if (stacks.Count > 0)
-        {
-            FlashCardsHelper.ChangeMenu(new ManageStacksMenu());
-        }
-        else
-        {
-            ConsoleHelper.PressAnyKeyToContinue("You must create a stack before going to the manage stacks menu!");
-            Run();
-        }
+        FlashCardsHelper.ChangeMenu(new ManageStacksMenu());
     }
 
     private void ManageCards()

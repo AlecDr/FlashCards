@@ -113,7 +113,7 @@ internal abstract class DatabaseHelper
             IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'STUDY_SESSIONS_ANSWERS' AND schema_id = SCHEMA_ID('dbo'))
             BEGIN
                 CREATE TABLE STUDY_SESSIONS_ANSWERS
-                    (id INT NOT NULL IDENTITY(1,1) PRIMARY KEY, answer VARCHAR(255), card_id INT NOT NULL, points INT, FOREIGN KEY (card_id) REFERENCES CARDS(ID));
+                    (id INT NOT NULL IDENTITY(1,1) PRIMARY KEY, answer VARCHAR(255), card_id INT NOT NULL, points INT, study_session_id INT NOT NULL, FOREIGN KEY (card_id) REFERENCES CARDS(ID), FOREIGN KEY (study_session_id) REFERENCES STUDY_SESSIONS(ID) );
             END;
             ";
         command.ExecuteNonQuery();

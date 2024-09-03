@@ -25,6 +25,24 @@ internal abstract class StudySessionDao
         return FindStudySessionById(id);
     }
 
+    internal static List<StudySessionShowDTO> FindStudySessionsByStackId(int stackId)
+    {
+        DatabaseHelper.SqliteConnection!.Open();
+
+        string query = @"
+            SELECT id as Id, started_at as StartedAt, finished_at as FinishedAt, stack_id as StackId
+            
+            FROM STUDY_SESSIONS 
+
+            WHERE stack_id = @StackId";
+
+        List<StudySessionShowDTO> studySessions = DatabaseHelper.SqliteConnection.Query<StudySessionShowDTO>(query, new { StackId = stackId }).ToList();
+
+        DatabaseHelper.SqliteConnection!.Close();
+
+        return studySessions;
+    }
+
     internal static StudySessionShowDTO? FindStudySessionById(int id)
     {
         DatabaseHelper.SqliteConnection!.Open();
@@ -43,7 +61,6 @@ internal abstract class StudySessionDao
         return studySessionShowDTO;
     }
 
-
     internal static bool UpdateStudySession(StudySessionUpdateDTO studySessionUpdateDTO)
     {
         StudySessionShowDTO? studySession = FindStudySessionById(studySessionUpdateDTO.Id);
@@ -55,6 +72,41 @@ internal abstract class StudySessionDao
             string query = "UPDATE STUDY_SESSIONS SET started_at = @StartedAt, finished_at = @FinishedAt, stack_id = @StackId WHERE id = @Id;";
 
             DatabaseHelper.SqliteConnection!.Execute(query, studySessionUpdateDTO.ToAnonymousObject());
+            DatabaseHelper.SqliteConnection!.Close();
+
+            return true;
+        }
+
+        return false;
+    }
+
+    internal static void DeleteStudySessionByStackId(int stackId)
+    {
+        List<StudySessionShowDTO> studySessions = FindStudySessionsByStackId(stackId);
+
+        foreach (StudySessionShowDTO studySession in studySessions)
+        {
+            DeleteStudySessionById(studySession.Id);
+        }
+    }
+
+    internal static bool DeleteStudySessionById(int id)
+    {
+        StudySessionShowDTO? studySession = FindStudySessionById(id);
+
+        if (studySession != null)
+        {
+            StudySessionAnswerDao.DeleteStudySessionAnswersByStudySessionId(studySession.Id);
+
+            DatabaseHelper.SqliteConnection!.Open();
+
+            string query = "DELETE FROM STUDY_SESSIONS WHERE id = @Id;";
+
+            DatabaseHelper.SqliteConnection.Execute(query, new
+            {
+                Id = id,
+            });
+
             DatabaseHelper.SqliteConnection!.Close();
 
             return true;
