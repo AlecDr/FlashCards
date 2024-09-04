@@ -195,7 +195,29 @@ This project leverages key architectural patterns to ensure maintainability and 
 
 ### 🔖 Prerequisites
 
-**CSharp**: `version 8.0 or higher`
+- **CSharp**: `version 8.0 or higher`
+- **SQL Server**: Ensure you have SQL Server installed and running on your machine. The project uses SQL Server for storing flashcards and study session data.
+---
+
+### ⚙️ Configuration Settings
+
+The project requires specific configurations to run properly, particularly related to database connectivity. You must create a `App.config` file using the same structure of the `App.config.example` file. Below is an explanation of the configuration settings found in the `App.config.example` file:
+
+```xml
+<?xml version="1.0" encoding="utf-8" ?> 
+<configuration>
+    <appSettings>
+        <add key="DatabaseName" value="FlashCards" />
+        <add key="DatabaseInstance" value="MSSQLSERVER01" />
+        <add key="DatabaseHost" value="localhost" />
+    </appSettings>
+</configuration>
+```
+
+- **DatabaseName**: Specifies the name of the database where the flashcards data will be stored. In this case, it's set to FlashCards.
+- **DatabaseInstance**: Indicates the instance of the SQL Server that the application will connect to. Here, it's set to MSSQLSERVER01.
+- **DatabaseHost**: Defines the host of the SQL Server, which is set to localhost, meaning it will connect to a local SQL Server instance.
+---
 
 ### 📦 Installation
 
