@@ -2,5 +2,7 @@
 <configuration>
     <appSettings>
         <add key="DatabaseName" value="" />
+		<add key="DatabaseInstance" value="" />
+		<add key="DatabaseHost" value="" />
     </appSettings>
 </configuration>

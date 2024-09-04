@@ -23,7 +23,7 @@ internal abstract class DatabaseHelper
 
     internal static void CreateConnection()
     {
-        _sqliteConnection = new SqlConnection($"Server=localhost\\MSSQLSERVER02;Database={GetDatabaseName()};Trusted_Connection=True;");
+        _sqliteConnection = new SqlConnection($"Server={GetDatabaseHost()}\\{GetDatabaseInstance()};Database={GetDatabaseName()};Trusted_Connection=True;");
     }
 
     private static string GetDatabaseName()
@@ -31,6 +31,20 @@ internal abstract class DatabaseHelper
         string databaseName = ConfigurationManager.AppSettings.Get("DatabaseName");
 
         return databaseName;
+    }
+
+    private static string GetDatabaseInstance()
+    {
+        string databaseInstance = ConfigurationManager.AppSettings.Get("DatabaseInstance");
+
+        return databaseInstance;
+    }
+
+    private static string GetDatabaseHost()
+    {
+        string databaseHost = ConfigurationManager.AppSettings.Get("DatabaseHost");
+
+        return databaseHost;
     }
 
     internal static SqlCommand CreateCommand()
