@@ -30,8 +30,14 @@ internal class MainMenu : IMenu
                 StudySessions();
                 break;
             case '4':
+                Reports();
+                break;
+            case '5':
                 FlashCardsHelper.AskName();
                 Run();
+                break;
+            case '6':
+                Environment.Exit(0);
                 break;
             default:
                 Run();
@@ -45,13 +51,20 @@ internal class MainMenu : IMenu
         "1 - [slateblue1]M[/]anage Stacks",
         "2 - [slateblue1]M[/]anage Cards",
         "3 - [slateblue1]S[/]tudy Sessions",
-        "4 - [slateblue1]C[/]hange User",
+        "4 - [slateblue1]R[/]eports",
+        "5 - [slateblue1]C[/]hange User",
+        "6 - [slateblue1]E[/]xit",
         ];
     }
 
     private void ManageStacks()
     {
         FlashCardsHelper.ChangeMenu(new ManageStacksMenu());
+    }
+
+    private void Reports()
+    {
+        FlashCardsHelper.ChangeMenu(new ReportsMenu());
     }
 
     private void ManageCards()
