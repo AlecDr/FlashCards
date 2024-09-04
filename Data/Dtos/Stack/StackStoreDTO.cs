@@ -1,4 +1,4 @@
-﻿namespace FlashCards.Dtos.Stack;
+﻿namespace FlashCards.Data.Dtos.Stack;
 
 internal class StackStoreDTO
 {

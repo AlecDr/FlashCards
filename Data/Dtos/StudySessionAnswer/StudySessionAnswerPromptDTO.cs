@@ -1,4 +1,4 @@
-﻿namespace FlashCards.Dtos.StudySessionAnswer;
+﻿namespace FlashCards.Data.Dtos.StudySessionAnswer;
 
 internal class StudySessionAnswerPromptDTO
 {

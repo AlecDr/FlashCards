@@ -1,4 +1,4 @@
-﻿namespace FlashCards.Dtos.Card;
+﻿namespace FlashCards.Data.Dtos.StudySession;
 
 internal class StudySessionStoreDTO
 {

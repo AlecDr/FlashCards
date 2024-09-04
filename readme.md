@@ -237,7 +237,7 @@ To run the project, execute the following command:
 
 - [X] This is an application where the users will create Stacks of Flashcards.
 - [X] You'll need two different tables for stacks and flashcards. The tables should be linked by a foreign key.
-- [ ] Stacks should have an unique name.
+- [X] Stacks should have an unique name.
 - [X] Every flashcard needs to be part of a stack. If a stack is deleted, the same should happen with the flashcard.
 - [X] You should use DTOs to show the flashcards to the user ~~without the Id of the stack it belongs to~~.
 - [X] When showing a stack to the user, the flashcard Ids should always start with 1 without gaps between them. If you have 10 cards and number 5 is deleted, the table should show Ids from 1 to 9.

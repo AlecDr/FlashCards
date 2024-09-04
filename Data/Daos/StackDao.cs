@@ -1,8 +1,8 @@
 ﻿using Dapper;
-using FlashCards.Dtos.Stack;
+using FlashCards.Data.Dtos.Stack;
 using FlashCards.Helpers;
 
-namespace FlashCards.Daos;
+namespace FlashCards.Data.Daos;
 
 internal abstract class StackDao
 {
@@ -13,6 +13,24 @@ internal abstract class StackDao
         string query = "SELECT id, name FROM STACKS WHERE id = @id AND username = @username";
 
         StackShowDTO? stackShowDTO = DatabaseHelper.SqliteConnection.QueryFirstOrDefault<StackShowDTO>(query, new { id, username });
+
+        DatabaseHelper.SqliteConnection!.Close();
+
+        return stackShowDTO;
+    }
+
+    internal static StackShowDTO? FindStackByName(string name, int? idToIgnore = null)
+    {
+        DatabaseHelper.SqliteConnection!.Open();
+
+        string query = "SELECT id, name FROM STACKS WHERE name = @Name";
+
+        if (idToIgnore != null)
+        {
+            query = $"{query} and id != @Id";
+        }
+
+        StackShowDTO? stackShowDTO = DatabaseHelper.SqliteConnection.QueryFirstOrDefault<StackShowDTO>(query, new { Id = idToIgnore, Name = name });
 
         DatabaseHelper.SqliteConnection!.Close();
 

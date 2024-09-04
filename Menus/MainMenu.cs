@@ -1,5 +1,5 @@
-﻿using FlashCards.Daos;
-using FlashCards.Dtos.Stack;
+﻿using FlashCards.Data.Daos;
+using FlashCards.Data.Dtos.Stack;
 using FlashCards.Helpers;
 using FlashCards.Menus.Interfaces;
 

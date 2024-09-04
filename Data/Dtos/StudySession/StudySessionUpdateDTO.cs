@@ -1,6 +1,4 @@
-﻿using FlashCards.Dtos.Card;
-
-namespace FlashCards.Dtos.StudySession;
+﻿namespace FlashCards.Data.Dtos.StudySession;
 
 internal class StudySessionUpdateDTO : StudySessionStoreDTO
 {

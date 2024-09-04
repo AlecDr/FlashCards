@@ -1,4 +1,4 @@
-﻿namespace FlashCards.Dtos.Card;
+﻿namespace FlashCards.Data.Dtos.Card;
 
 internal class CardPromptDTO
 {

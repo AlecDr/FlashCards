@@ -1,4 +1,4 @@
-﻿namespace FlashCards.Dtos.StudySession;
+﻿namespace FlashCards.Data.Dtos.StudySession;
 
 internal class StudySessionShowDTO
 {

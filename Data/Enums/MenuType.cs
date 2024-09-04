@@ -1,4 +1,4 @@
-﻿namespace FlashCards.Enums;
+﻿namespace FlashCards.Data.Enums;
 
 internal enum MenuType
 {

@@ -1,6 +1,4 @@
-﻿using FlashCards.Dtos.StudySessionAnswer;
-
-namespace FlashCards.Dtos.Card;
+﻿namespace FlashCards.Data.Dtos.StudySessionAnswer;
 
 internal class StudySessionAnswerStoreDTO
 {

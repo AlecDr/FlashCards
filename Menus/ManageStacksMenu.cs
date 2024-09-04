@@ -1,5 +1,5 @@
-﻿using FlashCards.Daos;
-using FlashCards.Dtos.Stack;
+﻿using FlashCards.Data.Daos;
+using FlashCards.Data.Dtos.Stack;
 using FlashCards.Helpers;
 using FlashCards.Menus.Interfaces;
 
@@ -61,25 +61,46 @@ internal class ManageStacksMenu : IMenu
     {
         ConsoleHelper.ShowTitle("Create an Stack");
 
-        StackPromptDTO? stackPromptDTO = PromptUserForStackData();
+        StackPromptDTO? stackPromptDTO = null;
+        bool cancelCreation = false;
 
-        if (stackPromptDTO != null)
+        while ((stackPromptDTO != null ? StackDao.FindStackByName(stackPromptDTO.Name!) != null : true) && !cancelCreation)
         {
-            StackDao.StoreStack(
-                StackStoreDTO.FromPromptDTO(
+            if (stackPromptDTO != null)
+            {
+                ConsoleHelper.ShowMessage("This name is already in use, pick other!");
+                stackPromptDTO = PromptUserForStackData();
+
+                if (stackPromptDTO == null)
+                {
+                    cancelCreation = true;
+                }
+            }
+            else
+            {
+                stackPromptDTO = PromptUserForStackData();
+            }
+        }
+
+        if (!cancelCreation)
+        {
+            StackStoreDTO stackStoreDTO = StackStoreDTO.FromPromptDTO(
                     FlashCardsHelper.CurrentUser!,
-                    stackPromptDTO
-                )
+                    stackPromptDTO!
+                );
+
+            StackDao.StoreStack(
+                StackStoreDTO.FromPromptDTO(FlashCardsHelper.CurrentUser!, stackPromptDTO!)
             );
 
-            ConsoleHelper.ShowMessage("Stack stored successfully!");
-            ConsoleHelper.PressAnyKeyToContinue();
+            ConsoleHelper.PressAnyKeyToContinue("Stack stored successfully!");
         }
         else
         {
-            ConsoleHelper.ShowMessage("No data was provided, operation canceled by user!");
-            ConsoleHelper.PressAnyKeyToContinue();
+            ConsoleHelper.PressAnyKeyToContinue("No data was provided, operation canceled by user!");
         }
+
+
     }
 
     private void UpdateStack()
@@ -90,31 +111,49 @@ internal class ManageStacksMenu : IMenu
 
         if (selectedStackShowDTO != null)
         {
-            StackPromptDTO? stackPromptDTO = PromptUserForStackData(selectedStackShowDTO);
+            StackPromptDTO? stackPromptDTO = null;
+            bool cancelCreation = false;
 
-            if (stackPromptDTO != null)
+            while ((stackPromptDTO != null ? StackDao.FindStackByName(stackPromptDTO.Name!, selectedStackShowDTO.Id) != null : true) && !cancelCreation)
             {
-                bool result = StackDao.UpdateStack(
-                   StackUpdateDTO.FromPromptDTO(
-                       selectedStackShowDTO.Id,
-                       FlashCardsHelper.CurrentUser!,
-                       stackPromptDTO
-                   )
-               );
+                if (stackPromptDTO != null)
+                {
+                    ConsoleHelper.ShowMessage("This name is already in use, pick other!");
+                    stackPromptDTO = PromptUserForStackData(selectedStackShowDTO);
 
-                ConsoleHelper.ShowMessage(result ? "Stack updated successfully!" : "Something went wrong :(");
-                ConsoleHelper.PressAnyKeyToContinue();
+                    if (stackPromptDTO == null)
+                    {
+                        cancelCreation = true;
+                    }
+                }
+                else
+                {
+                    stackPromptDTO = PromptUserForStackData(selectedStackShowDTO);
+                }
+            }
+
+            if (!cancelCreation)
+            {
+                StackUpdateDTO stackUpdateDTO = StackUpdateDTO.FromPromptDTO(
+                        selectedStackShowDTO.Id,
+                        FlashCardsHelper.CurrentUser!,
+                        stackPromptDTO!
+                    );
+
+                StackDao.UpdateStack(
+                    stackUpdateDTO
+                );
+
+                ConsoleHelper.PressAnyKeyToContinue("Stack updated successfully!");
             }
             else
             {
-                ConsoleHelper.ShowMessage("No data was provided, operation canceled by user!");
-                ConsoleHelper.PressAnyKeyToContinue();
+                ConsoleHelper.PressAnyKeyToContinue("No data was provided, operation canceled by user!");
             }
         }
         else
         {
-            ConsoleHelper.ShowMessage("No stack found.");
-            ConsoleHelper.PressAnyKeyToContinue();
+            ConsoleHelper.PressAnyKeyToContinue("No stack found.");
         }
     }
 

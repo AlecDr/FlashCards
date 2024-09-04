@@ -1,9 +1,8 @@
 ﻿using Dapper;
-using FlashCards.Dtos.Card;
-using FlashCards.Dtos.StudySession;
+using FlashCards.Data.Dtos.StudySession;
 using FlashCards.Helpers;
 
-namespace FlashCards.Daos;
+namespace FlashCards.Data.Daos;
 
 internal abstract class StudySessionDao
 {

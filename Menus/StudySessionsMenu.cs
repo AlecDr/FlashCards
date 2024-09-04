@@ -1,8 +1,8 @@
-﻿using FlashCards.Daos;
-using FlashCards.Dtos.Card;
-using FlashCards.Dtos.Stack;
-using FlashCards.Dtos.StudySession;
-using FlashCards.Dtos.StudySessionAnswer;
+﻿using FlashCards.Data.Daos;
+using FlashCards.Data.Dtos.Card;
+using FlashCards.Data.Dtos.Stack;
+using FlashCards.Data.Dtos.StudySession;
+using FlashCards.Data.Dtos.StudySessionAnswer;
 using FlashCards.Helpers;
 using FlashCards.Menus.Interfaces;
 using Spectre.Console;
