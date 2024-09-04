@@ -1,6 +1,8 @@
-﻿<?xml version="1.0" encoding="utf-8" ?> 
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <configuration>
-    <appSettings>
-        <add key="DatabaseName" value="" />
-    </appSettings>
+	<appSettings>
+		<add key="DatabaseName" value="" />
+		<add key="DatabaseInstance" value="" />
+		<add key="DatabaseHost" value="" />
+	</appSettings>
 </configuration>
