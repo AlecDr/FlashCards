@@ -54,24 +54,16 @@ This project leverages key architectural patterns to ensure maintainability and 
 
 ---
 
-## 📂 Repository Structure
+##  Repository Structure
 
 ```sh
 └── FlashCards/
     ├── App.config
     ├── App.config.example
-    ├── Daos
-    │   ├── CardDao.cs
-    │   ├── StackDao.cs
-    │   ├── StudySessionAnswerDao.cs
-    │   └── StudySessionDao.cs
-    ├── Dtos
-    │   ├── Card
-    │   ├── Stack
-    │   ├── StudySession
-    │   └── StudySessionAnswer
-    ├── Enums
-    │   └── MenuType.cs
+    ├── Data
+    │   ├── Daos
+    │   ├── Dtos
+    │   └── Enums
     ├── FlashCards.csproj
     ├── FlashCards.sln
     ├── Helpers
@@ -86,12 +78,13 @@ This project leverages key architectural patterns to ensure maintainability and 
     │   ├── ManageCardsMenu.cs
     │   ├── ManageStacksMenu.cs
     │   └── StudySessionsMenu.cs
-    └── Program.cs
+    ├── Program.cs
+    └── readme.md
 ```
 
 ---
 
-## 🧩 Modules
+##  Modules
 
 <details closed><summary>.</summary>
 
@@ -125,63 +118,63 @@ This project leverages key architectural patterns to ensure maintainability and 
 
 </details>
 
-<details closed><summary>Dtos.Card</summary>
+<details closed><summary>Data.Dtos.Card</summary>
 
 | File | Summary |
 | --- | --- |
-| [CardStoreDTO.cs](https://github.com/AlecDr/FlashCards/blob/main/Dtos/Card/CardStoreDTO.cs) | <code>❯ REPLACE-ME</code> |
-| [CardUpdateDTO.cs](https://github.com/AlecDr/FlashCards/blob/main/Dtos/Card/CardUpdateDTO.cs) | <code>❯ REPLACE-ME</code> |
-| [CardShowDTO.cs](https://github.com/AlecDr/FlashCards/blob/main/Dtos/Card/CardShowDTO.cs) | <code>❯ REPLACE-ME</code> |
-| [CardPromptDTO.cs](https://github.com/AlecDr/FlashCards/blob/main/Dtos/Card/CardPromptDTO.cs) | <code>❯ REPLACE-ME</code> |
+| [CardStoreDTO.cs](https://github.com/AlecDr/FlashCards/blob/main/Data/Dtos/Card/CardStoreDTO.cs) | <code>❯ REPLACE-ME</code> |
+| [CardUpdateDTO.cs](https://github.com/AlecDr/FlashCards/blob/main/Data/Dtos/Card/CardUpdateDTO.cs) | <code>❯ REPLACE-ME</code> |
+| [CardShowDTO.cs](https://github.com/AlecDr/FlashCards/blob/main/Data/Dtos/Card/CardShowDTO.cs) | <code>❯ REPLACE-ME</code> |
+| [CardPromptDTO.cs](https://github.com/AlecDr/FlashCards/blob/main/Data/Dtos/Card/CardPromptDTO.cs) | <code>❯ REPLACE-ME</code> |
 
 </details>
 
-<details closed><summary>Dtos.StudySession</summary>
+<details closed><summary>Data.Dtos.StudySession</summary>
 
 | File | Summary |
 | --- | --- |
-| [StudySessionUpdateDTO.cs](https://github.com/AlecDr/FlashCards/blob/main/Dtos/StudySession/StudySessionUpdateDTO.cs) | <code>❯ REPLACE-ME</code> |
-| [StudySessionStoreDTO.cs](https://github.com/AlecDr/FlashCards/blob/main/Dtos/StudySession/StudySessionStoreDTO.cs) | <code>❯ REPLACE-ME</code> |
-| [StudySessionShowDTO.cs](https://github.com/AlecDr/FlashCards/blob/main/Dtos/StudySession/StudySessionShowDTO.cs) | <code>❯ REPLACE-ME</code> |
+| [StudySessionUpdateDTO.cs](https://github.com/AlecDr/FlashCards/blob/main/Data/Dtos/StudySession/StudySessionUpdateDTO.cs) | <code>❯ REPLACE-ME</code> |
+| [StudySessionStoreDTO.cs](https://github.com/AlecDr/FlashCards/blob/main/Data/Dtos/StudySession/StudySessionStoreDTO.cs) | <code>❯ REPLACE-ME</code> |
+| [StudySessionShowDTO.cs](https://github.com/AlecDr/FlashCards/blob/main/Data/Dtos/StudySession/StudySessionShowDTO.cs) | <code>❯ REPLACE-ME</code> |
 
 </details>
 
-<details closed><summary>Dtos.Stack</summary>
+<details closed><summary>Data.Dtos.Stack</summary>
 
 | File | Summary |
 | --- | --- |
-| [StackStoreDTO.cs](https://github.com/AlecDr/FlashCards/blob/main/Dtos/Stack/StackStoreDTO.cs) | <code>❯ REPLACE-ME</code> |
-| [StackUpdateDTO.cs](https://github.com/AlecDr/FlashCards/blob/main/Dtos/Stack/StackUpdateDTO.cs) | <code>❯ REPLACE-ME</code> |
-| [StackShowDTO.cs](https://github.com/AlecDr/FlashCards/blob/main/Dtos/Stack/StackShowDTO.cs) | <code>❯ REPLACE-ME</code> |
-| [StackPromptDTO.cs](https://github.com/AlecDr/FlashCards/blob/main/Dtos/Stack/StackPromptDTO.cs) | <code>❯ REPLACE-ME</code> |
+| [StackStoreDTO.cs](https://github.com/AlecDr/FlashCards/blob/main/Data/Dtos/Stack/StackStoreDTO.cs) | <code>❯ REPLACE-ME</code> |
+| [StackUpdateDTO.cs](https://github.com/AlecDr/FlashCards/blob/main/Data/Dtos/Stack/StackUpdateDTO.cs) | <code>❯ REPLACE-ME</code> |
+| [StackShowDTO.cs](https://github.com/AlecDr/FlashCards/blob/main/Data/Dtos/Stack/StackShowDTO.cs) | <code>❯ REPLACE-ME</code> |
+| [StackPromptDTO.cs](https://github.com/AlecDr/FlashCards/blob/main/Data/Dtos/Stack/StackPromptDTO.cs) | <code>❯ REPLACE-ME</code> |
 
 </details>
 
-<details closed><summary>Dtos.StudySessionAnswer</summary>
+<details closed><summary>Data.Dtos.StudySessionAnswer</summary>
 
 | File | Summary |
 | --- | --- |
-| [StudySessionAnswerStoreDTO.cs](https://github.com/AlecDr/FlashCards/blob/main/Dtos/StudySessionAnswer/StudySessionAnswerStoreDTO.cs) | <code>❯ REPLACE-ME</code> |
-| [StudySessionAnswerPromptDTO.cs](https://github.com/AlecDr/FlashCards/blob/main/Dtos/StudySessionAnswer/StudySessionAnswerPromptDTO.cs) | <code>❯ REPLACE-ME</code> |
+| [StudySessionAnswerStoreDTO.cs](https://github.com/AlecDr/FlashCards/blob/main/Data/Dtos/StudySessionAnswer/StudySessionAnswerStoreDTO.cs) | <code>❯ REPLACE-ME</code> |
+| [StudySessionAnswerPromptDTO.cs](https://github.com/AlecDr/FlashCards/blob/main/Data/Dtos/StudySessionAnswer/StudySessionAnswerPromptDTO.cs) | <code>❯ REPLACE-ME</code> |
 
 </details>
 
-<details closed><summary>Enums</summary>
+<details closed><summary>Data.Enums</summary>
 
 | File | Summary |
 | --- | --- |
-| [MenuType.cs](https://github.com/AlecDr/FlashCards/blob/main/Enums/MenuType.cs) | <code>❯ REPLACE-ME</code> |
+| [MenuType.cs](https://github.com/AlecDr/FlashCards/blob/main/Data/Enums/MenuType.cs) | <code>❯ REPLACE-ME</code> |
 
 </details>
 
-<details closed><summary>Daos</summary>
+<details closed><summary>Data.Daos</summary>
 
 | File | Summary |
 | --- | --- |
-| [StackDao.cs](https://github.com/AlecDr/FlashCards/blob/main/Daos/StackDao.cs) | <code>❯ REPLACE-ME</code> |
-| [StudySessionDao.cs](https://github.com/AlecDr/FlashCards/blob/main/Daos/StudySessionDao.cs) | <code>❯ REPLACE-ME</code> |
-| [CardDao.cs](https://github.com/AlecDr/FlashCards/blob/main/Daos/CardDao.cs) | <code>❯ REPLACE-ME</code> |
-| [StudySessionAnswerDao.cs](https://github.com/AlecDr/FlashCards/blob/main/Daos/StudySessionAnswerDao.cs) | <code>❯ REPLACE-ME</code> |
+| [StackDao.cs](https://github.com/AlecDr/FlashCards/blob/main/Data/Daos/StackDao.cs) | <code>❯ REPLACE-ME</code> |
+| [StudySessionDao.cs](https://github.com/AlecDr/FlashCards/blob/main/Data/Daos/StudySessionDao.cs) | <code>❯ REPLACE-ME</code> |
+| [CardDao.cs](https://github.com/AlecDr/FlashCards/blob/main/Data/Daos/CardDao.cs) | <code>❯ REPLACE-ME</code> |
+| [StudySessionAnswerDao.cs](https://github.com/AlecDr/FlashCards/blob/main/Data/Daos/StudySessionAnswerDao.cs) | <code>❯ REPLACE-ME</code> |
 
 </details>
 
