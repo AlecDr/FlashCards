@@ -1,5 +1,8 @@
-﻿using FlashCards.Helpers;
+﻿using FlashCards.Data.Daos;
+using FlashCards.Data.Dtos.Reports;
+using FlashCards.Helpers;
 using FlashCards.Menus.Interfaces;
+using Spectre.Console;
 
 namespace FlashCards.Menus;
 
@@ -47,6 +50,35 @@ internal class ReportsMenu : IMenu
 
     private void ResumedStudySessions()
     {
+        List<ResumedStudySessionsReportDTO> resumedStudySessions = ReportsDao.ResumedStudySessionsByUser(FlashCardsHelper.CurrentUser!);
+
+        if (resumedStudySessions.Count > 0)
+        {
+            // Create a table
+            var table = new Table();
+
+            // Add some columns
+            table.AddColumn("Study Session ID");
+            table.AddColumn("Stack Name");
+            table.AddColumn("Started At");
+            table.AddColumn("Finished At");
+            table.AddColumn("Total Points");
+
+            foreach (ResumedStudySessionsReportDTO resumedStudySession in resumedStudySessions)
+            {
+                // Add some rows
+                table.AddRow(resumedStudySession.SessionId.ToString(), resumedStudySession.StackName, resumedStudySession.StartedAt.ToString(), resumedStudySession.FinishedAt.ToString(), resumedStudySession.TotalPoints.ToString());
+            }
+
+            // Render the table to the console
+            AnsiConsole.Write(table);
+
+        }
+        else
+        {
+            ConsoleHelper.PressAnyKeyToContinue("No study sessions found!");
+        }
+
         ConsoleHelper.PressAnyKeyToContinue("Resumed Study Sessions Report");
     }
 
