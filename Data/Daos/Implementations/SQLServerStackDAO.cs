@@ -1,12 +1,13 @@
 ﻿using Dapper;
+using FlashCards.Data.Daos.Interfaces;
 using FlashCards.Data.Dtos.Stack;
 using FlashCards.Helpers;
 
-namespace FlashCards.Data.Daos;
+namespace FlashCards.Data.Daos.Implementations;
 
-internal abstract class StackDao
+class SQLServerStackDAO : IStackDAO
 {
-    internal static StackShowDTO? FindStack(int id, string username)
+    public StackShowDTO? Find(int id, string username)
     {
         DatabaseHelper.SqliteConnection!.Open();
 
@@ -19,7 +20,7 @@ internal abstract class StackDao
         return stackShowDTO;
     }
 
-    internal static StackShowDTO? FindStackByName(string name, int? idToIgnore = null)
+    public StackShowDTO? FindByName(string name, int? idToIgnore = null)
     {
         DatabaseHelper.SqliteConnection!.Open();
 
@@ -37,7 +38,7 @@ internal abstract class StackDao
         return stackShowDTO;
     }
 
-    internal static List<StackShowDTO> GetAllStacks(string username)
+    public List<StackShowDTO> All(string username)
     {
         DatabaseHelper.SqliteConnection!.Open();
 
@@ -49,7 +50,7 @@ internal abstract class StackDao
         return stacks;
     }
 
-    internal static void StoreStack(StackStoreDTO stackStoreDTO)
+    public void Store(StackStoreDTO stackStoreDTO)
     {
         DatabaseHelper.SqliteConnection!.Open();
 
@@ -59,9 +60,9 @@ internal abstract class StackDao
         DatabaseHelper.SqliteConnection!.Close();
     }
 
-    internal static bool UpdateStack(StackUpdateDTO stackUpdateDTO)
+    public bool Update(StackUpdateDTO stackUpdateDTO)
     {
-        StackShowDTO? stack = FindStack(stackUpdateDTO.Id, stackUpdateDTO.Username);
+        StackShowDTO? stack = Find(stackUpdateDTO.Id, stackUpdateDTO.Username);
 
         if (stack != null)
         {
@@ -78,9 +79,9 @@ internal abstract class StackDao
         return false;
     }
 
-    internal static bool DeleteStack(int id, string username)
+    public bool Delete(int id, string username)
     {
-        StackShowDTO? stack = FindStack(id, username);
+        StackShowDTO? stack = Find(id, username);
 
         if (stack != null)
         {
@@ -104,7 +105,7 @@ internal abstract class StackDao
         return false;
     }
 
-    internal static int? GetLastSequenceFromStack(int id)
+    public int? GetLastSequenceById(int id)
     {
         DatabaseHelper.SqliteConnection!.Open();
 

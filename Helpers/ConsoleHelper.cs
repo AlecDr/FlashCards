@@ -1,13 +1,27 @@
-﻿using Spectre.Console;
+﻿using FlashCards.Data.Daos.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
+using Spectre.Console;
 using System.Globalization;
 
 namespace FlashCards.Helpers;
 
-internal abstract class ConsoleHelper
+internal class ConsoleHelper
 {
-    internal static string GetOption(string menuTitle, List<string> menuChoices, string? menuSubtitle = null)
+    private readonly IServiceProvider _serviceProvider;
+
+    public ConsoleHelper(
+        IServiceProvider serviceProvider,
+        IStackDAO stackDAO
+    )
     {
-        string option = ShowMenu(FlashCardsHelper.CurrentUser!, menuChoices, menuTitle, menuSubtitle);
+        _serviceProvider = serviceProvider;
+    }
+
+    internal string GetOption(string menuTitle, List<string> menuChoices, string? menuSubtitle = null)
+    {
+        FlashCardsHelper flashCardsHelper = _serviceProvider.GetRequiredService<FlashCardsHelper>();
+
+        string option = ShowMenu(flashCardsHelper.CurrentUser!, menuChoices, menuTitle, menuSubtitle);
 
         while (option == null || option.Trim() == "")
         {
@@ -18,7 +32,7 @@ internal abstract class ConsoleHelper
         return option;
     }
 
-    internal static string ShowMenu(string username, List<string> menuChoices, string menuTitle, string? menuSubTitle = null)
+    internal string ShowMenu(string username, List<string> menuChoices, string menuTitle, string? menuSubTitle = null)
     {
         ShowMessage($"FlashCards - [steelblue1] {username} [/] - [underline darkslategray2]{menuTitle}[/] {menuSubTitle ?? ""}", true, true, false);
         ShowMessage("");
@@ -26,14 +40,14 @@ internal abstract class ConsoleHelper
         return GetChoice(menuChoices, "Choose an option bellow");
     }
 
-    internal static void ClearWindow()
+    internal void ClearWindow()
     {
         Console.Clear();
         AnsiConsole.Clear();
         Console.Clear();
     }
 
-    internal static void ShowMessage(
+    internal void ShowMessage(
         string message,
         bool breakLine = true,
         bool shouldClearWindow = false,
@@ -77,7 +91,7 @@ internal abstract class ConsoleHelper
 
     }
 
-    internal static string? GetText(
+    internal string? GetText(
         string message,
         string? defaultValue = null,
         bool canCancel = false,
@@ -166,7 +180,7 @@ internal abstract class ConsoleHelper
         return input;
     }
 
-    internal static int? GetInteger(
+    internal int? GetInteger(
         string message,
         int? defaultValue = null,
         bool canCancel = false,
@@ -274,7 +288,7 @@ internal abstract class ConsoleHelper
         return int.Parse(input);
     }
 
-    internal static string GetChoice(
+    internal string GetChoice(
         List<string> choices,
         string title,
         int pageSize = 10,
@@ -291,7 +305,7 @@ internal abstract class ConsoleHelper
                 .AddChoices(choices));
     }
 
-    internal static void PressAnyKeyToContinue(string? message = null)
+    internal void PressAnyKeyToContinue(string? message = null)
     {
         ShowMessage("");
 
@@ -351,7 +365,7 @@ internal abstract class ConsoleHelper
         return dateTime;
     }
 
-    internal static void ShowTitle(string message, bool mustClearWindow = true)
+    internal void ShowTitle(string message, bool mustClearWindow = true)
     {
         ShowMessage($"FlashCards - [underline slateblue1]{message}[/]", true, mustClearWindow, false);
         ShowMessage("");

@@ -1,17 +1,27 @@
-﻿using FlashCards.Data.Daos;
+﻿using FlashCards.Data.Daos.Interfaces;
 using FlashCards.Data.Dtos.Stack;
 using FlashCards.Helpers;
 using FlashCards.Menus.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FlashCards.Menus;
 
 internal class ManageStacksMenu : IMenu
 {
+    private readonly IStackDAO _stackDao;
+    private readonly IServiceProvider _serviceProvider;
+
+    public ManageStacksMenu(IServiceProvider serviceProvider, IStackDAO stackDAO)
+    {
+        _serviceProvider = serviceProvider;
+        _stackDao = stackDAO;
+    }
+
     public void Run()
     {
-        ConsoleHelper.ClearWindow();
+        _serviceProvider.GetRequiredService<ConsoleHelper>().ClearWindow();
 
-        string option = ConsoleHelper.GetOption("Manage Stacks Menu", GetMenuChoices());
+        string option = _serviceProvider.GetRequiredService<ConsoleHelper>().GetOption("Manage Stacks Menu", GetMenuChoices());
 
         RouteToOption(option.ElementAt(0));
     }
@@ -59,16 +69,16 @@ internal class ManageStacksMenu : IMenu
 
     private void CreateStack()
     {
-        ConsoleHelper.ShowTitle("Create an Stack");
+        _serviceProvider.GetRequiredService<ConsoleHelper>().ShowTitle("Create an Stack");
 
         StackPromptDTO? stackPromptDTO = null;
         bool cancelCreation = false;
 
-        while ((stackPromptDTO != null ? StackDao.FindStackByName(stackPromptDTO.Name!) != null : true) && !cancelCreation)
+        while ((stackPromptDTO != null ? _stackDao.FindByName(stackPromptDTO.Name!) != null : true) && !cancelCreation)
         {
             if (stackPromptDTO != null)
             {
-                ConsoleHelper.ShowMessage("This name is already in use, pick other!");
+                _serviceProvider.GetRequiredService<ConsoleHelper>().ShowMessage("This name is already in use, pick other!");
                 stackPromptDTO = PromptUserForStackData();
 
                 if (stackPromptDTO == null)
@@ -85,19 +95,19 @@ internal class ManageStacksMenu : IMenu
         if (!cancelCreation)
         {
             StackStoreDTO stackStoreDTO = StackStoreDTO.FromPromptDTO(
-                    FlashCardsHelper.CurrentUser!,
+                    _serviceProvider.GetRequiredService<FlashCardsHelper>().CurrentUser!,
                     stackPromptDTO!
                 );
 
-            StackDao.StoreStack(
-                StackStoreDTO.FromPromptDTO(FlashCardsHelper.CurrentUser!, stackPromptDTO!)
+            _stackDao.Store(
+                StackStoreDTO.FromPromptDTO(_serviceProvider.GetRequiredService<FlashCardsHelper>().CurrentUser!, stackPromptDTO!)
             );
 
-            ConsoleHelper.PressAnyKeyToContinue("Stack stored successfully!");
+            _serviceProvider.GetRequiredService<ConsoleHelper>().PressAnyKeyToContinue("Stack stored successfully!");
         }
         else
         {
-            ConsoleHelper.PressAnyKeyToContinue("No data was provided, operation canceled by user!");
+            _serviceProvider.GetRequiredService<ConsoleHelper>().PressAnyKeyToContinue("No data was provided, operation canceled by user!");
         }
 
 
@@ -105,20 +115,20 @@ internal class ManageStacksMenu : IMenu
 
     private void UpdateStack()
     {
-        ConsoleHelper.ShowTitle("Update an stack");
+        _serviceProvider.GetRequiredService<ConsoleHelper>().ShowTitle("Update an stack");
 
-        StackShowDTO? selectedStackShowDTO = ShowStacksAndAskForId("Whats the stack ID to update?");
+        StackShowDTO? selectedStackShowDTO = _serviceProvider.GetRequiredService<FlashCardsHelper>().ShowStacksAndAskForId("Whats the stack ID to update?");
 
         if (selectedStackShowDTO != null)
         {
             StackPromptDTO? stackPromptDTO = null;
             bool cancelCreation = false;
 
-            while ((stackPromptDTO != null ? StackDao.FindStackByName(stackPromptDTO.Name!, selectedStackShowDTO.Id) != null : true) && !cancelCreation)
+            while ((stackPromptDTO == null || _stackDao.FindByName(stackPromptDTO.Name!, selectedStackShowDTO.Id) != null) && !cancelCreation)
             {
                 if (stackPromptDTO != null)
                 {
-                    ConsoleHelper.ShowMessage("This name is already in use, pick other!");
+                    _serviceProvider.GetRequiredService<ConsoleHelper>().ShowMessage("This name is already in use, pick other!");
                     stackPromptDTO = PromptUserForStackData(selectedStackShowDTO);
 
                     if (stackPromptDTO == null)
@@ -136,121 +146,97 @@ internal class ManageStacksMenu : IMenu
             {
                 StackUpdateDTO stackUpdateDTO = StackUpdateDTO.FromPromptDTO(
                         selectedStackShowDTO.Id,
-                        FlashCardsHelper.CurrentUser!,
+                        _serviceProvider.GetRequiredService<FlashCardsHelper>().CurrentUser!,
                         stackPromptDTO!
                     );
 
-                StackDao.UpdateStack(
+                _stackDao.Update(
                     stackUpdateDTO
                 );
 
-                ConsoleHelper.PressAnyKeyToContinue("Stack updated successfully!");
+                _serviceProvider.GetRequiredService<ConsoleHelper>().PressAnyKeyToContinue("Stack updated successfully!");
             }
             else
             {
-                ConsoleHelper.PressAnyKeyToContinue("No data was provided, operation canceled by user!");
+                _serviceProvider.GetRequiredService<ConsoleHelper>().PressAnyKeyToContinue("No data was provided, operation canceled by user!");
             }
         }
         else
         {
-            ConsoleHelper.PressAnyKeyToContinue("No stack found.");
+            _serviceProvider.GetRequiredService<ConsoleHelper>().PressAnyKeyToContinue("No stack found.");
         }
     }
 
     private void ManageStacks()
     {
-        List<StackShowDTO> stacks = StackDao.GetAllStacks(FlashCardsHelper.CurrentUser!);
+        List<StackShowDTO> stacks = _stackDao.All(_serviceProvider.GetRequiredService<FlashCardsHelper>().CurrentUser!);
 
         if (stacks.Count > 0)
         {
-            FlashCardsHelper.ChangeMenu(new ManageCardsMenu());
+            _serviceProvider.GetRequiredService<FlashCardsHelper>().ChangeMenu(_serviceProvider.GetRequiredService<ManageCardsMenu>());
         }
         else
         {
-            ConsoleHelper.PressAnyKeyToContinue("You must create a stack before going to the manage stacks menu!");
+            _serviceProvider.GetRequiredService<ConsoleHelper>().PressAnyKeyToContinue("You must create a stack before going to the manage stacks menu!");
             Run();
         }
     }
 
     private void DeleteStack()
     {
-        ConsoleHelper.ShowTitle("Delete a stack");
+        _serviceProvider.GetRequiredService<ConsoleHelper>().ShowTitle("Delete a stack");
 
-        StackShowDTO? selectedStackShowDTO = ShowStacksAndAskForId("Whats the stack ID to delete?");
+        StackShowDTO? selectedStackShowDTO = _serviceProvider.GetRequiredService<FlashCardsHelper>().ShowStacksAndAskForId("Whats the stack ID to delete?");
 
         if (selectedStackShowDTO != null)
         {
-            bool result = StackDao.DeleteStack(selectedStackShowDTO.Id, FlashCardsHelper.CurrentUser!);
+            bool result = _stackDao.Delete(selectedStackShowDTO.Id, _serviceProvider.GetRequiredService<FlashCardsHelper>().CurrentUser!);
 
-            ConsoleHelper.ShowMessage(result ? "Stack deleted successfully!" : "Something went wrong :(");
-            ConsoleHelper.PressAnyKeyToContinue();
+            _serviceProvider.GetRequiredService<ConsoleHelper>().ShowMessage(result ? "Stack deleted successfully!" : "Something went wrong :(");
+            _serviceProvider.GetRequiredService<ConsoleHelper>().PressAnyKeyToContinue();
         }
         else
         {
-            ConsoleHelper.ShowMessage("No stacks found.");
-            ConsoleHelper.PressAnyKeyToContinue();
+            _serviceProvider.GetRequiredService<ConsoleHelper>().ShowMessage("No stacks found.");
+            _serviceProvider.GetRequiredService<ConsoleHelper>().PressAnyKeyToContinue();
         }
     }
 
     internal void MainMenu()
     {
-        FlashCardsHelper.ChangeMenu(new MainMenu());
+        _serviceProvider.GetRequiredService<FlashCardsHelper>().ChangeMenu(_serviceProvider.GetRequiredService<MainMenu>());
     }
 
-    internal static void PrintStack(StackShowDTO stack)
-    {
-        ConsoleHelper.ShowMessage($"{stack.Id} - {stack.Name}");
-    }
+
 
     private void ListStacks()
     {
-        ConsoleHelper.ShowTitle("List of stacks");
+        _serviceProvider.GetRequiredService<ConsoleHelper>().ShowTitle("List of stacks");
 
-        List<StackShowDTO> stacks = StackDao.GetAllStacks(FlashCardsHelper.CurrentUser!);
+        List<StackShowDTO> stacks = _stackDao.All(_serviceProvider.GetRequiredService<FlashCardsHelper>().CurrentUser!);
 
         if (stacks.Count() > 0)
         {
             foreach (StackShowDTO stack in stacks)
             {
-                PrintStack(stack);
+                _serviceProvider.GetRequiredService<FlashCardsHelper>().PrintStack(stack);
             }
 
-            ConsoleHelper.PressAnyKeyToContinue();
+            _serviceProvider.GetRequiredService<ConsoleHelper>().PressAnyKeyToContinue();
         }
         else
         {
-            ConsoleHelper.ShowMessage("No stack found.");
-            ConsoleHelper.PressAnyKeyToContinue();
+            _serviceProvider.GetRequiredService<ConsoleHelper>().ShowMessage("No stack found.");
+            _serviceProvider.GetRequiredService<ConsoleHelper>().PressAnyKeyToContinue();
         }
 
     }
 
-    internal static StackShowDTO? ShowStacksAndAskForId(string message)
+
+
+    internal StackPromptDTO? PromptUserForStackData(StackShowDTO? defaultStackShowDTO = null)
     {
-        List<StackShowDTO> stacks = StackDao.GetAllStacks(FlashCardsHelper.CurrentUser!);
-
-        if (stacks.Count <= 0)
-        {
-            return null;
-        }
-        else
-        {
-            foreach (StackShowDTO stack in stacks)
-            {
-                PrintStack(stack);
-            }
-
-            ConsoleHelper.ShowMessage("");
-
-            int.TryParse(ConsoleHelper.GetText(message), out int id);
-
-            return stacks.FirstOrDefault(stack => stack.Id == (id > 0 ? id : 0));
-        }
-    }
-
-    internal static StackPromptDTO? PromptUserForStackData(StackShowDTO? defaultStackShowDTO = null)
-    {
-        string? name = ConsoleHelper.GetText(
+        string? name = _serviceProvider.GetRequiredService<ConsoleHelper>().GetText(
             "Whats the stack name?",
             defaultStackShowDTO != null ? defaultStackShowDTO.Name : null,
             true,

@@ -1,10 +1,12 @@
 ﻿using FlashCards.Data.Daos;
+using FlashCards.Data.Daos.Interfaces;
 using FlashCards.Data.Dtos.Card;
 using FlashCards.Data.Dtos.Stack;
 using FlashCards.Data.Dtos.StudySession;
 using FlashCards.Data.Dtos.StudySessionAnswer;
 using FlashCards.Helpers;
 using FlashCards.Menus.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 using Spectre.Console;
 
 namespace FlashCards.Menus;
@@ -12,17 +14,22 @@ namespace FlashCards.Menus;
 internal class StudySessionsMenu : IMenu
 {
     private StackShowDTO? CurrentStack;
+    private readonly IServiceProvider _serviceProvider;
+    public StudySessionsMenu(IServiceProvider serviceProvider, IStackDAO stackDAO)
+    {
+        _serviceProvider = serviceProvider;
+    }
 
     public void Run()
     {
-        ConsoleHelper.ClearWindow();
+        _serviceProvider.GetRequiredService<ConsoleHelper>().ClearWindow();
 
         while (CurrentStack == null)
         {
             SelectCurrentStack(true);
         }
 
-        string option = ConsoleHelper.GetOption($"Study Sessions", GetMenuChoices(),
+        string option = _serviceProvider.GetRequiredService<ConsoleHelper>().GetOption($"Study Sessions", GetMenuChoices(),
             $" - [underline greenyellow] {CurrentStack!.Id} - {CurrentStack!.Name} [/]");
 
         RouteToOption(option.ElementAt(0));
@@ -30,7 +37,7 @@ internal class StudySessionsMenu : IMenu
 
     void SelectCurrentStack(bool goBackOnWrongSelection = false)
     {
-        StackShowDTO? selectedStackShowDTO = ManageStacksMenu.ShowStacksAndAskForId("Whats the stack ID to study?");
+        StackShowDTO? selectedStackShowDTO = _serviceProvider.GetRequiredService<FlashCardsHelper>().ShowStacksAndAskForId("Whats the stack ID to study?");
 
         if (selectedStackShowDTO != null)
         {
@@ -40,7 +47,7 @@ internal class StudySessionsMenu : IMenu
         {
             if (goBackOnWrongSelection)
             {
-                ConsoleHelper.PressAnyKeyToContinue("No stack found, going back to main menu");
+                _serviceProvider.GetRequiredService<ConsoleHelper>().PressAnyKeyToContinue("No stack found, going back to main menu");
                 MainMenu();
             }
             else
@@ -74,7 +81,7 @@ internal class StudySessionsMenu : IMenu
 
     internal void MainMenu()
     {
-        FlashCardsHelper.ChangeMenu(new MainMenu());
+        _serviceProvider.GetRequiredService<FlashCardsHelper>().ChangeMenu(_serviceProvider.GetRequiredService<MainMenu>());
     }
 
     public List<string> GetMenuChoices()
@@ -132,17 +139,17 @@ internal class StudySessionsMenu : IMenu
                 int totalPoints = answeredCards.Sum(x => x.Points);
 
                 // show the total points
-                ConsoleHelper.ShowMessage($"The study session ended, you computed {totalPoints} points.");
+                _serviceProvider.GetRequiredService<ConsoleHelper>().ShowMessage($"The study session ended, you computed {totalPoints} points.");
             }
             else
             {
-                ConsoleHelper.ShowMessage($"Something went wrong and we could not start the study session.");
+                _serviceProvider.GetRequiredService<ConsoleHelper>().ShowMessage($"Something went wrong and we could not start the study session.");
             }
         }
         else
         {
-            ConsoleHelper.ShowMessage("This stack have 0 cards, you must create at least one card to be able to study it!");
-            ConsoleHelper.PressAnyKeyToContinue();
+            _serviceProvider.GetRequiredService<ConsoleHelper>().ShowMessage("This stack have 0 cards, you must create at least one card to be able to study it!");
+            _serviceProvider.GetRequiredService<ConsoleHelper>().PressAnyKeyToContinue();
         }
     }
 
@@ -150,7 +157,7 @@ internal class StudySessionsMenu : IMenu
     {
         ShowCardAsPanel(card);
 
-        string? answer = ConsoleHelper.GetText("What is the answer for this card?");
+        string? answer = _serviceProvider.GetRequiredService<ConsoleHelper>().GetText("What is the answer for this card?");
 
         ShowCardAsPanel(card, false);
 
@@ -162,16 +169,16 @@ internal class StudySessionsMenu : IMenu
             if (answer.ToLower().Trim() == card.Back.ToLower().Trim())
             {
                 points = 1;
-                ConsoleHelper.ShowMessage("Your answer is correct!");
+                _serviceProvider.GetRequiredService<ConsoleHelper>().ShowMessage("Your answer is correct!");
             }
             else
             {
-                ConsoleHelper.ShowMessage("Your answer is not correct :(");
+                _serviceProvider.GetRequiredService<ConsoleHelper>().ShowMessage("Your answer is not correct :(");
             }
 
             if (hasNextCard)
             {
-                ConsoleHelper.PressAnyKeyToContinue("Press any key to go to the next card");
+                _serviceProvider.GetRequiredService<ConsoleHelper>().PressAnyKeyToContinue("Press any key to go to the next card");
             }
 
             return new StudySessionAnswerPromptDTO(answer, points);

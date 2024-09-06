@@ -2,17 +2,25 @@
 using FlashCards.Data.Dtos.Reports;
 using FlashCards.Helpers;
 using FlashCards.Menus.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 using Spectre.Console;
 
 namespace FlashCards.Menus;
 
 internal class ReportsMenu : IMenu
 {
+    private readonly IServiceProvider _serviceProvider;
+
+    public ReportsMenu(IServiceProvider serviceProvider)
+    {
+        _serviceProvider = serviceProvider;
+    }
+
     public void Run()
     {
-        ConsoleHelper.ClearWindow();
+        _serviceProvider.GetRequiredService<ConsoleHelper>().ClearWindow();
 
-        string option = ConsoleHelper.GetOption("Reports Menu", GetMenuChoices());
+        string option = _serviceProvider.GetRequiredService<ConsoleHelper>().GetOption("Reports Menu", GetMenuChoices());
 
         RouteToOption(option.ElementAt(0));
     }
@@ -45,12 +53,12 @@ internal class ReportsMenu : IMenu
 
     private void MainMenu()
     {
-        FlashCardsHelper.ChangeMenu(new MainMenu());
+        _serviceProvider.GetRequiredService<FlashCardsHelper>().ChangeMenu(_serviceProvider.GetRequiredService<MainMenu>());
     }
 
     private void ResumedStudySessions()
     {
-        List<ResumedStudySessionsReportDTO> resumedStudySessions = ReportsDao.ResumedStudySessionsByUser(FlashCardsHelper.CurrentUser!);
+        List<ResumedStudySessionsReportDTO> resumedStudySessions = ReportsDao.ResumedStudySessionsByUser(_serviceProvider.GetRequiredService<FlashCardsHelper>().CurrentUser!);
 
         if (resumedStudySessions.Count > 0)
         {
@@ -76,10 +84,10 @@ internal class ReportsMenu : IMenu
         }
         else
         {
-            ConsoleHelper.PressAnyKeyToContinue("No study sessions found!");
+            _serviceProvider.GetRequiredService<ConsoleHelper>().PressAnyKeyToContinue("No study sessions found!");
         }
 
-        ConsoleHelper.PressAnyKeyToContinue("Resumed Study Sessions Report");
+        _serviceProvider.GetRequiredService<ConsoleHelper>().PressAnyKeyToContinue("Resumed Study Sessions Report");
     }
 
 }

@@ -1,17 +1,27 @@
-﻿using FlashCards.Menus;
+﻿using FlashCards.Data.Daos.Interfaces;
+using FlashCards.Data.Dtos.Stack;
+using FlashCards.Menus;
 using FlashCards.Menus.Interfaces;
 
 namespace FlashCards.Helpers;
 
-internal abstract class FlashCardsHelper
+internal class FlashCardsHelper
 {
-    internal static string? CurrentUser { get; set; }
+    private readonly IStackDAO _stackDao;
+    private readonly ConsoleHelper _consoleHelper;
+    private IMenu _currentMenu;
 
-    private static IMenu _currentMenu = new MainMenu();
+    public FlashCardsHelper(IStackDAO stackDao, ConsoleHelper consoleHelper, MainMenu mainMenu)
+    {
+        _stackDao = stackDao;
+        _consoleHelper = consoleHelper;
+        _currentMenu = mainMenu;
+    }
 
-    internal static IMenu CurrentMenu { get { return _currentMenu; } }
+    internal string? CurrentUser { get; set; }
+    internal IMenu CurrentMenu => _currentMenu;
 
-    internal static void Run()
+    internal void Run()
     {
         while (CurrentUser == null)
         {
@@ -21,20 +31,20 @@ internal abstract class FlashCardsHelper
         CurrentMenu.Run();
     }
 
-    internal static void CheckUser()
+    internal void CheckUser()
     {
         if (CurrentUser == null)
         {
             AskName();
-            ConsoleHelper.ClearWindow();
+            _consoleHelper.ClearWindow();
         }
     }
 
-    internal static void AskName()
+    internal void AskName()
     {
-        ConsoleHelper.ShowTitle("User Selection");
+        _consoleHelper.ShowTitle("User Selection");
 
-        string? name = ConsoleHelper.GetText("What is your [slateblue1]name[/]? ");
+        string? name = _consoleHelper.GetText("What is your [slateblue1]name[/]? ");
 
         if (name != null && name.Trim().Length > 0)
         {
@@ -42,11 +52,37 @@ internal abstract class FlashCardsHelper
         }
     }
 
-    internal static void ChangeMenu(IMenu menu)
+    internal void ChangeMenu(IMenu menu)
     {
         _currentMenu = menu;
         Run();
     }
 
+    internal void PrintStack(StackShowDTO stack)
+    {
+        _consoleHelper.ShowMessage($"{stack.Id} - {stack.Name}");
+    }
 
+    internal StackShowDTO? ShowStacksAndAskForId(string message)
+    {
+        List<StackShowDTO> stacks = _stackDao.All(CurrentUser!);
+
+        if (stacks.Count <= 0)
+        {
+            return null;
+        }
+        else
+        {
+            foreach (StackShowDTO stack in stacks)
+            {
+                PrintStack(stack);
+            }
+
+            _consoleHelper.ShowMessage("");
+
+            int.TryParse(_consoleHelper.GetText(message), out int id);
+
+            return stacks.FirstOrDefault(stack => stack.Id == (id > 0 ? id : 0));
+        }
+    }
 }
