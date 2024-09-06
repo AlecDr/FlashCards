@@ -2,6 +2,7 @@
 using FlashCards.Data.Dtos.Stack;
 using FlashCards.Menus;
 using FlashCards.Menus.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FlashCards.Helpers;
 
@@ -9,13 +10,15 @@ internal class FlashCardsHelper
 {
     private readonly IStackDAO _stackDao;
     private readonly ConsoleHelper _consoleHelper;
+    private readonly IServiceProvider _serviceProvider;
     private IMenu _currentMenu;
 
-    public FlashCardsHelper(IStackDAO stackDao, ConsoleHelper consoleHelper, MainMenu mainMenu)
+
+    public FlashCardsHelper(IStackDAO stackDao, ConsoleHelper consoleHelper, IServiceProvider serviceProvider)
     {
         _stackDao = stackDao;
         _consoleHelper = consoleHelper;
-        _currentMenu = mainMenu;
+        _serviceProvider = serviceProvider;
     }
 
     internal string? CurrentUser { get; set; }
@@ -23,6 +26,11 @@ internal class FlashCardsHelper
 
     internal void Run()
     {
+        if (CurrentMenu == null)
+        {
+            _currentMenu = _serviceProvider.GetRequiredService<MainMenu>();
+        }
+
         while (CurrentUser == null)
         {
             CheckUser();

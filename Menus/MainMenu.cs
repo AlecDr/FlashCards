@@ -10,20 +10,27 @@ internal class MainMenu : IMenu
 {
     private readonly IStackDAO _stackDao;
     private readonly IServiceProvider _serviceProvider;
+    private readonly ConsoleHelper _consoleHelper;
+    private readonly FlashCardsHelper _flashCardsHelper;
 
-    public MainMenu(IStackDAO stackDao, IServiceProvider serviceProvider)
+    public MainMenu(
+        IStackDAO stackDao,
+        IServiceProvider serviceProvider,
+        ConsoleHelper consoleHelper,
+        FlashCardsHelper flashCardsHelper
+        )
     {
         _stackDao = stackDao;
         _serviceProvider = serviceProvider;
+        _consoleHelper = consoleHelper;
+        _flashCardsHelper = flashCardsHelper;
     }
 
     public void Run()
     {
-        var consoleHelper = _serviceProvider.GetRequiredService<ConsoleHelper>();
+        _consoleHelper.ClearWindow();
 
-        consoleHelper.ClearWindow();
-
-        string option = consoleHelper.GetOption("Main Menu", GetMenuChoices());
+        string option = _consoleHelper.GetOption("Main Menu", GetMenuChoices());
 
         RouteToOption(option.ElementAt(0));
     }
@@ -45,7 +52,7 @@ internal class MainMenu : IMenu
                 Reports();
                 break;
             case '5':
-                _serviceProvider.GetRequiredService<FlashCardsHelper>().AskName();
+                _flashCardsHelper.AskName();
                 Run();
                 break;
             case '6':
@@ -71,40 +78,40 @@ internal class MainMenu : IMenu
 
     private void ManageStacks()
     {
-        _serviceProvider.GetRequiredService<FlashCardsHelper>().ChangeMenu(_serviceProvider.GetRequiredService<ManageStacksMenu>());
+        _flashCardsHelper.ChangeMenu(_serviceProvider.GetRequiredService<ManageStacksMenu>());
     }
 
     private void Reports()
     {
-        _serviceProvider.GetRequiredService<FlashCardsHelper>().ChangeMenu(_serviceProvider.GetRequiredService<ReportsMenu>());
+        _flashCardsHelper.ChangeMenu(_serviceProvider.GetRequiredService<ReportsMenu>());
     }
 
     private void ManageCards()
     {
-        List<StackShowDTO> stacks = _stackDao.All(_serviceProvider.GetRequiredService<FlashCardsHelper>().CurrentUser!);
+        List<StackShowDTO> stacks = _stackDao.All(_flashCardsHelper.CurrentUser!);
 
         if (stacks.Count > 0)
         {
-            _serviceProvider.GetRequiredService<FlashCardsHelper>().ChangeMenu(_serviceProvider.GetRequiredService<ManageCardsMenu>());
+            _flashCardsHelper.ChangeMenu(_serviceProvider.GetRequiredService<ManageCardsMenu>());
         }
         else
         {
-            _serviceProvider.GetRequiredService<ConsoleHelper>().PressAnyKeyToContinue("You must create a stack before going to the manage cards menu!");
+            _consoleHelper.PressAnyKeyToContinue("You must create a stack before going to the manage cards menu!");
             Run();
         }
     }
 
     private void StudySessions()
     {
-        List<StackShowDTO> stacks = _stackDao.All(_serviceProvider.GetRequiredService<FlashCardsHelper>().CurrentUser!);
+        List<StackShowDTO> stacks = _stackDao.All(_flashCardsHelper.CurrentUser!);
 
         if (stacks.Count > 0)
         {
-            _serviceProvider.GetRequiredService<FlashCardsHelper>().ChangeMenu(_serviceProvider.GetRequiredService<StudySessionsMenu>());
+            _flashCardsHelper.ChangeMenu(_serviceProvider.GetRequiredService<StudySessionsMenu>());
         }
         else
         {
-            _serviceProvider.GetRequiredService<ConsoleHelper>().PressAnyKeyToContinue("You must create a stack before going to the study sessions menu!");
+            _consoleHelper.PressAnyKeyToContinue("You must create a stack before going to the study sessions menu!");
             Run();
         }
     }

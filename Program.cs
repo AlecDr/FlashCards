@@ -36,6 +36,13 @@ internal class Program
 
     private static void ConfigureServices(IServiceCollection services)
     {
+        // Register the others menus
+        services.AddTransient<MainMenu>();
+        services.AddTransient<ManageStacksMenu>();
+        services.AddTransient<ManageCardsMenu>();
+        services.AddTransient<ReportsMenu>();
+        services.AddTransient<StudySessionsMenu>();
+
         // register Singletons
         services.AddSingleton<ConsoleHelper>();
         services.AddSingleton<FlashCardsHelper>();
@@ -45,12 +52,5 @@ internal class Program
 
         // Register the main app class (entry point for the app)
         services.AddSingleton<Program>();
-
-        // Register the others menus
-        services.AddTransient<MainMenu>();
-        services.AddTransient<ManageStacksMenu>();
-        services.AddTransient<ManageCardsMenu>();
-        services.AddTransient<ReportsMenu>();
-        services.AddTransient<StudySessionsMenu>();
     }
 }

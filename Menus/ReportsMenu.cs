@@ -81,13 +81,13 @@ internal class ReportsMenu : IMenu
             // Render the table to the console
             AnsiConsole.Write(table);
 
+            _serviceProvider.GetRequiredService<ConsoleHelper>().PressAnyKeyToContinue("Resumed Study Sessions Report");
         }
         else
         {
             _serviceProvider.GetRequiredService<ConsoleHelper>().PressAnyKeyToContinue("No study sessions found!");
         }
 
-        _serviceProvider.GetRequiredService<ConsoleHelper>().PressAnyKeyToContinue("Resumed Study Sessions Report");
     }
 
 }
