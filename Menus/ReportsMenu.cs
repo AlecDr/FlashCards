@@ -10,17 +10,21 @@ namespace FlashCards.Menus;
 internal class ReportsMenu : IMenu
 {
     private readonly IServiceProvider _serviceProvider;
+    private readonly ConsoleHelper _consoleHelper;
+    private readonly FlashCardsHelper _flashCardsHelper;
 
-    public ReportsMenu(IServiceProvider serviceProvider)
+    public ReportsMenu(IServiceProvider serviceProvider, ConsoleHelper consoleHelper, FlashCardsHelper flashCardsHelper)
     {
         _serviceProvider = serviceProvider;
+        _consoleHelper = consoleHelper;
+        _flashCardsHelper = flashCardsHelper;
     }
 
     public void Run()
     {
-        _serviceProvider.GetRequiredService<ConsoleHelper>().ClearWindow();
+        _consoleHelper.ClearWindow();
 
-        string option = _serviceProvider.GetRequiredService<ConsoleHelper>().GetOption("Reports Menu", GetMenuChoices());
+        string option = _consoleHelper.GetOption("Reports Menu", GetMenuChoices());
 
         RouteToOption(option.ElementAt(0));
     }
@@ -53,12 +57,12 @@ internal class ReportsMenu : IMenu
 
     private void MainMenu()
     {
-        _serviceProvider.GetRequiredService<FlashCardsHelper>().ChangeMenu(_serviceProvider.GetRequiredService<MainMenu>());
+        _flashCardsHelper.ChangeMenu(_serviceProvider.GetRequiredService<MainMenu>());
     }
 
     private void ResumedStudySessions()
     {
-        List<ResumedStudySessionsReportDTO> resumedStudySessions = ReportsDao.ResumedStudySessionsByUser(_serviceProvider.GetRequiredService<FlashCardsHelper>().CurrentUser!);
+        List<ResumedStudySessionsReportDTO> resumedStudySessions = ReportsDao.ResumedStudySessionsByUser(_flashCardsHelper.CurrentUser!);
 
         if (resumedStudySessions.Count > 0)
         {
@@ -81,11 +85,11 @@ internal class ReportsMenu : IMenu
             // Render the table to the console
             AnsiConsole.Write(table);
 
-            _serviceProvider.GetRequiredService<ConsoleHelper>().PressAnyKeyToContinue("Resumed Study Sessions Report");
+            _consoleHelper.PressAnyKeyToContinue("Resumed Study Sessions Report");
         }
         else
         {
-            _serviceProvider.GetRequiredService<ConsoleHelper>().PressAnyKeyToContinue("No study sessions found!");
+            _consoleHelper.PressAnyKeyToContinue("No study sessions found!");
         }
 
     }

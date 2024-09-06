@@ -13,23 +13,29 @@ internal class ManageCardsMenu : IMenu
     private StackShowDTO? CurrentStack;
     private readonly IServiceProvider _serviceProvider;
     private readonly IStackDAO _stackDao;
+    private readonly FlashCardsHelper _flashCardsHelper;
+    private readonly ConsoleHelper _consoleHelper;
 
-    public ManageCardsMenu(IServiceProvider serviceProvider, IStackDAO stackDAO)
+
+
+    public ManageCardsMenu(IServiceProvider serviceProvider, IStackDAO stackDAO, FlashCardsHelper flashCardsHelper, ConsoleHelper consoleHelper)
     {
         _serviceProvider = serviceProvider;
         _stackDao = stackDAO;
+        _flashCardsHelper = flashCardsHelper;
+        _consoleHelper = consoleHelper;
     }
 
     public void Run()
     {
-        _serviceProvider.GetRequiredService<ConsoleHelper>().ClearWindow();
+        _consoleHelper.ClearWindow();
 
         while (CurrentStack == null)
         {
             SelectCurrentStack(true);
         }
 
-        string option = _serviceProvider.GetRequiredService<ConsoleHelper>().GetOption($"Manage Cards", GetMenuChoices(),
+        string option = _consoleHelper.GetOption($"Manage Cards", GetMenuChoices(),
             $" - [underline greenyellow] {CurrentStack!.Id} - {CurrentStack!.Name} [/]");
 
         RouteToOption(option.ElementAt(0));
@@ -37,7 +43,7 @@ internal class ManageCardsMenu : IMenu
 
     void SelectCurrentStack(bool goBackOnWrongSelection = false)
     {
-        StackShowDTO? selectedStackShowDTO = _serviceProvider.GetRequiredService<FlashCardsHelper>().ShowStacksAndAskForId("Whats the stack ID to manage?");
+        StackShowDTO? selectedStackShowDTO = _flashCardsHelper.ShowStacksAndAskForId("Whats the stack ID to manage?");
 
         if (selectedStackShowDTO != null)
         {
@@ -47,7 +53,7 @@ internal class ManageCardsMenu : IMenu
         {
             if (goBackOnWrongSelection)
             {
-                _serviceProvider.GetRequiredService<ConsoleHelper>().PressAnyKeyToContinue("No stack found, going back to main menu");
+                _consoleHelper.PressAnyKeyToContinue("No stack found, going back to main menu");
                 MainMenu();
             }
             else
@@ -93,7 +99,7 @@ internal class ManageCardsMenu : IMenu
 
     internal void MainMenu()
     {
-        _serviceProvider.GetRequiredService<FlashCardsHelper>().ChangeMenu(_serviceProvider.GetRequiredService<MainMenu>());
+        _flashCardsHelper.ChangeMenu(_serviceProvider.GetRequiredService<MainMenu>());
     }
 
     public List<string> GetMenuChoices()
@@ -110,7 +116,7 @@ internal class ManageCardsMenu : IMenu
 
     private void CreateCard()
     {
-        _serviceProvider.GetRequiredService<ConsoleHelper>().ShowTitle("Create a Card");
+        _consoleHelper.ShowTitle("Create a Card");
 
         CardPromptDTO? cardPromptDTO = PromptUserForCardData();
 
@@ -123,19 +129,19 @@ internal class ManageCardsMenu : IMenu
                 )
             );
 
-            _serviceProvider.GetRequiredService<ConsoleHelper>().ShowMessage("Card stored successfully!");
-            _serviceProvider.GetRequiredService<ConsoleHelper>().PressAnyKeyToContinue();
+            _consoleHelper.ShowMessage("Card stored successfully!");
+            _consoleHelper.PressAnyKeyToContinue();
         }
         else
         {
-            _serviceProvider.GetRequiredService<ConsoleHelper>().ShowMessage("No data was provided, operation canceled by user!");
-            _serviceProvider.GetRequiredService<ConsoleHelper>().PressAnyKeyToContinue();
+            _consoleHelper.ShowMessage("No data was provided, operation canceled by user!");
+            _consoleHelper.PressAnyKeyToContinue();
         }
     }
 
     private void UpdateCard()
     {
-        _serviceProvider.GetRequiredService<ConsoleHelper>().ShowTitle("Update a card");
+        _consoleHelper.ShowTitle("Update a card");
 
         CardShowDTO? selectedCardShowDTO = ShowCardsAndAskForSequence("Whats the card sequence to update?");
 
@@ -153,30 +159,30 @@ internal class ManageCardsMenu : IMenu
                    )
                );
 
-                _serviceProvider.GetRequiredService<ConsoleHelper>().ShowMessage(result ? "Card updated successfully!" : "Something went wrong :(");
-                _serviceProvider.GetRequiredService<ConsoleHelper>().PressAnyKeyToContinue();
+                _consoleHelper.ShowMessage(result ? "Card updated successfully!" : "Something went wrong :(");
+                _consoleHelper.PressAnyKeyToContinue();
             }
             else
             {
-                _serviceProvider.GetRequiredService<ConsoleHelper>().ShowMessage("No data was provided, operation canceled by user!");
-                _serviceProvider.GetRequiredService<ConsoleHelper>().PressAnyKeyToContinue();
+                _consoleHelper.ShowMessage("No data was provided, operation canceled by user!");
+                _consoleHelper.PressAnyKeyToContinue();
             }
         }
         else
         {
-            _serviceProvider.GetRequiredService<ConsoleHelper>().ShowMessage("No card found.");
-            _serviceProvider.GetRequiredService<ConsoleHelper>().PressAnyKeyToContinue();
+            _consoleHelper.ShowMessage("No card found.");
+            _consoleHelper.PressAnyKeyToContinue();
         }
     }
 
     internal void PrintCard(CardShowDTO card)
     {
-        _serviceProvider.GetRequiredService<ConsoleHelper>().ShowMessage($"{card.Sequence} - [dodgerblue1] Front: {card.Front}[/] - [springgreen3] Back: {card.Back}[/]");
+        _consoleHelper.ShowMessage($"{card.Sequence} - [dodgerblue1] Front: {card.Front}[/] - [springgreen3] Back: {card.Back}[/]");
     }
 
     private void ListCards(bool showPressAnyKeyToContinue = true, bool mustClearWindow = true)
     {
-        _serviceProvider.GetRequiredService<ConsoleHelper>().ShowTitle("List of cards", mustClearWindow);
+        _consoleHelper.ShowTitle("List of cards", mustClearWindow);
 
         List<CardShowDTO> cards = CardDao.GetAllCardsFromStack(CurrentStack!.Id);
 
@@ -189,15 +195,15 @@ internal class ManageCardsMenu : IMenu
 
             if (showPressAnyKeyToContinue)
             {
-                _serviceProvider.GetRequiredService<ConsoleHelper>().PressAnyKeyToContinue();
+                _consoleHelper.PressAnyKeyToContinue();
             }
         }
         else
         {
             if (showPressAnyKeyToContinue)
             {
-                _serviceProvider.GetRequiredService<ConsoleHelper>().ShowMessage("No card found.");
-                _serviceProvider.GetRequiredService<ConsoleHelper>().PressAnyKeyToContinue();
+                _consoleHelper.ShowMessage("No card found.");
+                _consoleHelper.PressAnyKeyToContinue();
             }
         }
 
@@ -205,7 +211,7 @@ internal class ManageCardsMenu : IMenu
 
     private void DeleteCard()
     {
-        _serviceProvider.GetRequiredService<ConsoleHelper>().ShowTitle("Delete a card");
+        _consoleHelper.ShowTitle("Delete a card");
 
         CardShowDTO? selectedCardShowDTO = ShowCardsAndAskForSequence("Whats the card SEQUENCE to delete?");
 
@@ -213,19 +219,19 @@ internal class ManageCardsMenu : IMenu
         {
             bool result = CardDao.DeleteCardById(selectedCardShowDTO.Id);
 
-            _serviceProvider.GetRequiredService<ConsoleHelper>().ShowMessage(result ? "Card deleted successfully!" : "Something went wrong :(");
-            _serviceProvider.GetRequiredService<ConsoleHelper>().PressAnyKeyToContinue();
+            _consoleHelper.ShowMessage(result ? "Card deleted successfully!" : "Something went wrong :(");
+            _consoleHelper.PressAnyKeyToContinue();
         }
         else
         {
-            _serviceProvider.GetRequiredService<ConsoleHelper>().ShowMessage("No cards found.");
-            _serviceProvider.GetRequiredService<ConsoleHelper>().PressAnyKeyToContinue();
+            _consoleHelper.ShowMessage("No cards found.");
+            _consoleHelper.PressAnyKeyToContinue();
         }
     }
 
     internal CardPromptDTO? PromptUserForCardData(CardShowDTO? defaultCardShowDTO = null)
     {
-        string? front = _serviceProvider.GetRequiredService<ConsoleHelper>().GetText(
+        string? front = _consoleHelper.GetText(
             "Whats the card front text?",
             defaultCardShowDTO != null ? defaultCardShowDTO.Front : null,
             true,
@@ -234,7 +240,7 @@ internal class ManageCardsMenu : IMenu
 
         if (front != null)
         {
-            string? back = _serviceProvider.GetRequiredService<ConsoleHelper>().GetText(
+            string? back = _consoleHelper.GetText(
                 "Whats the card back text?",
                 defaultCardShowDTO != null ? defaultCardShowDTO.Back : null,
                 true,
@@ -251,7 +257,7 @@ internal class ManageCardsMenu : IMenu
                 {
                     ListCards(false, false);
 
-                    int? promptSequence = _serviceProvider.GetRequiredService<ConsoleHelper>().GetInteger(
+                    int? promptSequence = _consoleHelper.GetInteger(
                            "Whats the card sequence?",
                            defaultCardShowDTO != null ? defaultCardShowDTO.Sequence : recommendedSequence,
                            true,
@@ -312,9 +318,9 @@ internal class ManageCardsMenu : IMenu
                 PrintCard(card);
             }
 
-            _serviceProvider.GetRequiredService<ConsoleHelper>().ShowMessage("");
+            _consoleHelper.ShowMessage("");
 
-            int.TryParse(_serviceProvider.GetRequiredService<ConsoleHelper>().GetText(message), out int sequence);
+            int.TryParse(_consoleHelper.GetText(message), out int sequence);
 
             return cards.FirstOrDefault(stack => stack.Sequence == (sequence > 0 ? sequence : 0));
         }
