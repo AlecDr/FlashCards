@@ -7,6 +7,13 @@ namespace FlashCards.Data.Daos.Implementations;
 
 internal class SQLServerCardDAO : ICardDAO
 {
+    private readonly IStudySessionAnswerDAO _studySessionAnswerDao;
+
+    public SQLServerCardDAO(IStudySessionAnswerDAO studySessionAnswerDao)
+    {
+        _studySessionAnswerDao = studySessionAnswerDao;
+    }
+
     public CardShowDTO? Find(int id)
     {
         DatabaseHelper.SqliteConnection!.Open();
@@ -67,7 +74,7 @@ internal class SQLServerCardDAO : ICardDAO
 
         if (card != null)
         {
-            StudySessionAnswerDao.DeleteStudySessionAnswersByCardId(card.Id);
+            _studySessionAnswerDao.DeleteByCardId(card.Id);
 
             DatabaseHelper.SqliteConnection!.Open();
 

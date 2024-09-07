@@ -1,5 +1,4 @@
-﻿using FlashCards.Data.Daos;
-using FlashCards.Data.Daos.Interfaces;
+﻿using FlashCards.Data.Daos.Interfaces;
 using FlashCards.Data.Dtos.Card;
 using FlashCards.Data.Dtos.Stack;
 using FlashCards.Data.Dtos.StudySession;
@@ -18,18 +17,25 @@ internal class StudySessionsMenu : IMenu
     private readonly ConsoleHelper _consoleHelper;
     private readonly FlashCardsHelper _flashCardsHelper;
     private readonly ICardDAO _cardDao;
+    private readonly IStudySessionAnswerDAO _studySessionAnswerDao;
+    private readonly IStudySessionDAO _studySessionDao;
 
     public StudySessionsMenu(
         IServiceProvider serviceProvider,
         IStackDAO stackDAO,
         ConsoleHelper consoleHelper,
         FlashCardsHelper flashCardsHelper,
-        ICardDAO cardDao)
+        ICardDAO cardDao,
+        IStudySessionAnswerDAO studySessionAnswerDao,
+        IStudySessionDAO studySessionDao
+        )
     {
         _serviceProvider = serviceProvider;
         _consoleHelper = consoleHelper;
         _flashCardsHelper = flashCardsHelper;
         _cardDao = cardDao;
+        _studySessionAnswerDao = studySessionAnswerDao;
+        _studySessionDao = studySessionDao;
     }
 
     public void Run()
@@ -120,7 +126,7 @@ internal class StudySessionsMenu : IMenu
         if (cards.Count > 0)
         {
             // start study session
-            StudySessionShowDTO? studySession = StudySessionDao.StoreStudySession(new StudySessionStoreDTO(CurrentStack!.Id, DateTime.Now));
+            StudySessionShowDTO? studySession = _studySessionDao.Store(new StudySessionStoreDTO(CurrentStack!.Id, DateTime.Now));
             List<StudySessionAnswerPromptDTO> answeredCards = [];
 
             if (studySession != null)
@@ -136,7 +142,7 @@ internal class StudySessionsMenu : IMenu
                     if (studySessionAnswerPromptDTO != null)
                     {
                         answeredCards.Add(studySessionAnswerPromptDTO);
-                        StudySessionAnswerDao.StoreStudySessionAnswer(StudySessionAnswerStoreDTO.FromPromptDTO(card.Id, studySession.Id, studySessionAnswerPromptDTO));
+                        _studySessionAnswerDao.Store(StudySessionAnswerStoreDTO.FromPromptDTO(card.Id, studySession.Id, studySessionAnswerPromptDTO));
                     }
                     else
                     {
@@ -146,7 +152,7 @@ internal class StudySessionsMenu : IMenu
                 }
 
                 // update the study session to finish it
-                StudySessionDao.UpdateStudySession(new StudySessionUpdateDTO(studySession.Id, studySession.StackId, studySession.StartedAt, DateTime.Now));
+                _studySessionDao.Update(new StudySessionUpdateDTO(studySession.Id, studySession.StackId, studySession.StartedAt, DateTime.Now));
 
                 int totalPoints = answeredCards.Sum(x => x.Points);
 

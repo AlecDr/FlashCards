@@ -1,4 +1,5 @@
-﻿using FlashCards.Data.Daos.Implementations;
+﻿using FlashCards.Data.Daos;
+using FlashCards.Data.Daos.Implementations;
 using FlashCards.Data.Daos.Interfaces;
 using FlashCards.Helpers;
 using FlashCards.Menus;
@@ -51,6 +52,8 @@ internal class Program
         services.AddTransient<IStackDAO, SQLServerStackDAO>();
         services.AddTransient<ICardDAO, SQLServerCardDAO>();
         services.AddTransient<IReportsDAO, SQLServerReportsDAO>();
+        services.AddTransient<IStudySessionAnswerDAO, SQLServerStudySessionAnswerDAO>();
+        services.AddTransient<IStudySessionDAO, SQLServerStudySessionDAO>();
 
         // Register the main app class (entry point for the app)
         services.AddSingleton<Program>();

@@ -1,12 +1,20 @@
 ﻿using Dapper;
+using FlashCards.Data.Daos.Interfaces;
 using FlashCards.Data.Dtos.StudySession;
 using FlashCards.Helpers;
 
 namespace FlashCards.Data.Daos;
 
-internal abstract class StudySessionDao
+internal class SQLServerStudySessionDAO : IStudySessionDAO
 {
-    internal static StudySessionShowDTO? StoreStudySession(StudySessionStoreDTO studySessionStoreDTO)
+    private readonly IStudySessionAnswerDAO _studySessionAnswerDao;
+
+    public SQLServerStudySessionDAO(IStudySessionAnswerDAO studySessionAnswerDao)
+    {
+        _studySessionAnswerDao = studySessionAnswerDao;
+    }
+
+    public StudySessionShowDTO? Store(StudySessionStoreDTO studySessionStoreDTO)
     {
         DatabaseHelper.SqliteConnection!.Open();
 
@@ -21,10 +29,10 @@ internal abstract class StudySessionDao
         int id = DatabaseHelper.SqliteConnection!.QuerySingle<int>(query, studySessionStoreDTO.ToAnonymousObject());
         DatabaseHelper.SqliteConnection!.Close();
 
-        return FindStudySessionById(id);
+        return Find(id);
     }
 
-    internal static List<StudySessionShowDTO> FindStudySessionsByStackId(int stackId)
+    public List<StudySessionShowDTO> FindByStackId(int stackId)
     {
         DatabaseHelper.SqliteConnection!.Open();
 
@@ -42,7 +50,7 @@ internal abstract class StudySessionDao
         return studySessions;
     }
 
-    internal static StudySessionShowDTO? FindStudySessionById(int id)
+    public StudySessionShowDTO? Find(int id)
     {
         DatabaseHelper.SqliteConnection!.Open();
 
@@ -60,9 +68,9 @@ internal abstract class StudySessionDao
         return studySessionShowDTO;
     }
 
-    internal static bool UpdateStudySession(StudySessionUpdateDTO studySessionUpdateDTO)
+    public bool Update(StudySessionUpdateDTO studySessionUpdateDTO)
     {
-        StudySessionShowDTO? studySession = FindStudySessionById(studySessionUpdateDTO.Id);
+        StudySessionShowDTO? studySession = Find(studySessionUpdateDTO.Id);
 
         if (studySession != null)
         {
@@ -79,23 +87,23 @@ internal abstract class StudySessionDao
         return false;
     }
 
-    internal static void DeleteStudySessionByStackId(int stackId)
+    public void DeleteByStackId(int stackId)
     {
-        List<StudySessionShowDTO> studySessions = FindStudySessionsByStackId(stackId);
+        List<StudySessionShowDTO> studySessions = FindByStackId(stackId);
 
         foreach (StudySessionShowDTO studySession in studySessions)
         {
-            DeleteStudySessionById(studySession.Id);
+            Delete(studySession.Id);
         }
     }
 
-    internal static bool DeleteStudySessionById(int id)
+    public bool Delete(int id)
     {
-        StudySessionShowDTO? studySession = FindStudySessionById(id);
+        StudySessionShowDTO? studySession = Find(id);
 
         if (studySession != null)
         {
-            StudySessionAnswerDao.DeleteStudySessionAnswersByStudySessionId(studySession.Id);
+            _studySessionAnswerDao.DeleteByStudySessionId(studySession.Id);
 
             DatabaseHelper.SqliteConnection!.Open();
 

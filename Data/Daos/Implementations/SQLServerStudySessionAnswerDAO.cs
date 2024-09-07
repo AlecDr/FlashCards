@@ -2,11 +2,11 @@
 using FlashCards.Data.Dtos.StudySessionAnswer;
 using FlashCards.Helpers;
 
-namespace FlashCards.Data.Daos;
+namespace FlashCards.Data.Daos.Interfaces;
 
-internal abstract class StudySessionAnswerDao
+internal class SQLServerStudySessionAnswerDAO : IStudySessionAnswerDAO
 {
-    internal static void StoreStudySessionAnswer(StudySessionAnswerStoreDTO studySessionAnswerStoreDTO)
+    public void Store(StudySessionAnswerStoreDTO studySessionAnswerStoreDTO)
     {
         DatabaseHelper.SqliteConnection!.Open();
 
@@ -16,7 +16,7 @@ internal abstract class StudySessionAnswerDao
         DatabaseHelper.SqliteConnection!.Close();
     }
 
-    internal static void DeleteStudySessionAnswer(int id)
+    public void Delete(int id)
     {
         DatabaseHelper.SqliteConnection!.Open();
 
@@ -26,7 +26,7 @@ internal abstract class StudySessionAnswerDao
         DatabaseHelper.SqliteConnection!.Close();
     }
 
-    internal static void DeleteStudySessionAnswersByCardId(int cardId)
+    public void DeleteByCardId(int cardId)
     {
         DatabaseHelper.SqliteConnection!.Open();
 
@@ -36,7 +36,7 @@ internal abstract class StudySessionAnswerDao
         DatabaseHelper.SqliteConnection!.Close();
     }
 
-    internal static void DeleteStudySessionAnswersByStudySessionId(int studySessionId)
+    public void DeleteByStudySessionId(int studySessionId)
     {
         DatabaseHelper.SqliteConnection!.Open();
 
