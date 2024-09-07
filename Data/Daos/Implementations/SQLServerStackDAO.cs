@@ -7,6 +7,13 @@ namespace FlashCards.Data.Daos.Implementations;
 
 class SQLServerStackDAO : IStackDAO
 {
+    private readonly ICardDAO _cardDAO;
+
+    public SQLServerStackDAO(ICardDAO cardDAO)
+    {
+        _cardDAO = cardDAO;
+    }
+
     public StackShowDTO? Find(int id, string username)
     {
         DatabaseHelper.SqliteConnection!.Open();
@@ -85,7 +92,7 @@ class SQLServerStackDAO : IStackDAO
 
         if (stack != null)
         {
-            CardDao.DeleteCardByStackId(stack.Id);
+            _cardDAO.DeleteByStackId(stack.Id);
             StudySessionDao.DeleteStudySessionByStackId(stack.Id);
 
             DatabaseHelper.SqliteConnection!.Open();

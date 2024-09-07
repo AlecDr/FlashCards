@@ -1,12 +1,13 @@
 ﻿using Dapper;
+using FlashCards.Data.Daos.Interfaces;
 using FlashCards.Data.Dtos.Card;
 using FlashCards.Helpers;
 
-namespace FlashCards.Data.Daos;
+namespace FlashCards.Data.Daos.Implementations;
 
-internal abstract class CardDao
+internal class SQLServerCardDAO : ICardDAO
 {
-    internal static CardShowDTO? FindCard(int id)
+    public CardShowDTO? Find(int id)
     {
         DatabaseHelper.SqliteConnection!.Open();
 
@@ -19,7 +20,7 @@ internal abstract class CardDao
         return cardShowDTO;
     }
 
-    internal static void StoreCardDapper(CardStoreDTO cardStoreDTO)
+    public void Store(CardStoreDTO cardStoreDTO)
     {
         DatabaseHelper.SqliteConnection!.Open();
 
@@ -29,9 +30,9 @@ internal abstract class CardDao
         DatabaseHelper.SqliteConnection!.Close();
     }
 
-    internal static bool UpdateCard(CardUpdateDTO cardUpdateDTO)
+    public bool Update(CardUpdateDTO cardUpdateDTO)
     {
-        CardShowDTO? card = FindCard(cardUpdateDTO.Id);
+        CardShowDTO? card = Find(cardUpdateDTO.Id);
 
         if (card != null)
         {
@@ -48,7 +49,7 @@ internal abstract class CardDao
         return false;
     }
 
-    internal static List<CardShowDTO> GetAllCardsFromStack(int stackId)
+    public List<CardShowDTO> AllCardsFromStack(int stackId)
     {
         DatabaseHelper.SqliteConnection!.Open();
 
@@ -60,9 +61,9 @@ internal abstract class CardDao
         return cards;
     }
 
-    internal static bool DeleteCardById(int id)
+    public bool Delete(int id)
     {
-        CardShowDTO? card = FindCard(id);
+        CardShowDTO? card = Find(id);
 
         if (card != null)
         {
@@ -85,15 +86,15 @@ internal abstract class CardDao
         return false;
     }
 
-    internal static bool DeleteCardByStackId(int stackId)
+    public bool DeleteByStackId(int stackId)
     {
-        List<CardShowDTO> cards = GetAllCardsFromStack(stackId);
+        List<CardShowDTO> cards = AllCardsFromStack(stackId);
 
         if (cards.Count > 0)
         {
             foreach (CardShowDTO card in cards)
             {
-                DeleteCardById(card.Id);
+                Delete(card.Id);
             }
 
             return true;
@@ -102,7 +103,7 @@ internal abstract class CardDao
         return false;
     }
 
-    internal static void Add1ToAllSequencesStartingFrom(int fromSequence, int stackId, int? maxSequenceToUpdate = null)
+    public void Add1ToAllSequencesStartingFrom(int fromSequence, int stackId, int? maxSequenceToUpdate = null)
     {
         DatabaseHelper.SqliteConnection!.Open();
 
@@ -118,7 +119,7 @@ internal abstract class CardDao
         DatabaseHelper.SqliteConnection!.Close();
     }
 
-    internal static void Subtract1ToAllSequencesStartingFrom(int fromSequence, int stackId, int? maxSequenceToUpdate)
+    public void Subtract1ToAllSequencesStartingFrom(int fromSequence, int stackId, int? maxSequenceToUpdate)
     {
         DatabaseHelper.SqliteConnection!.Open();
 

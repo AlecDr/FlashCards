@@ -17,12 +17,19 @@ internal class StudySessionsMenu : IMenu
     private readonly IServiceProvider _serviceProvider;
     private readonly ConsoleHelper _consoleHelper;
     private readonly FlashCardsHelper _flashCardsHelper;
+    private readonly ICardDAO _cardDao;
 
-    public StudySessionsMenu(IServiceProvider serviceProvider, IStackDAO stackDAO, ConsoleHelper consoleHelper, FlashCardsHelper flashCardsHelper)
+    public StudySessionsMenu(
+        IServiceProvider serviceProvider,
+        IStackDAO stackDAO,
+        ConsoleHelper consoleHelper,
+        FlashCardsHelper flashCardsHelper,
+        ICardDAO cardDao)
     {
         _serviceProvider = serviceProvider;
         _consoleHelper = consoleHelper;
         _flashCardsHelper = flashCardsHelper;
+        _cardDao = cardDao;
     }
 
     public void Run()
@@ -109,7 +116,7 @@ internal class StudySessionsMenu : IMenu
 
     private void StudyStack()
     {
-        List<CardShowDTO> cards = CardDao.GetAllCardsFromStack(CurrentStack!.Id);
+        List<CardShowDTO> cards = _cardDao.AllCardsFromStack(CurrentStack!.Id);
         if (cards.Count > 0)
         {
             // start study session

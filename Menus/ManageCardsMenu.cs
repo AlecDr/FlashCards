@@ -1,5 +1,4 @@
-﻿using FlashCards.Data.Daos;
-using FlashCards.Data.Daos.Interfaces;
+﻿using FlashCards.Data.Daos.Interfaces;
 using FlashCards.Data.Dtos.Card;
 using FlashCards.Data.Dtos.Stack;
 using FlashCards.Helpers;
@@ -15,15 +14,21 @@ internal class ManageCardsMenu : IMenu
     private readonly IStackDAO _stackDao;
     private readonly FlashCardsHelper _flashCardsHelper;
     private readonly ConsoleHelper _consoleHelper;
+    private readonly ICardDAO _cardDao;
 
-
-
-    public ManageCardsMenu(IServiceProvider serviceProvider, IStackDAO stackDAO, FlashCardsHelper flashCardsHelper, ConsoleHelper consoleHelper)
+    public ManageCardsMenu(
+        IServiceProvider serviceProvider,
+        IStackDAO stackDAO,
+        FlashCardsHelper flashCardsHelper,
+        ConsoleHelper consoleHelper,
+        ICardDAO cardDao
+        )
     {
         _serviceProvider = serviceProvider;
         _stackDao = stackDAO;
         _flashCardsHelper = flashCardsHelper;
         _consoleHelper = consoleHelper;
+        _cardDao = cardDao;
     }
 
     public void Run()
@@ -122,7 +127,7 @@ internal class ManageCardsMenu : IMenu
 
         if (cardPromptDTO != null)
         {
-            CardDao.StoreCardDapper(
+            _cardDao.Store(
                 CardStoreDTO.FromPromptDTO(
                     CurrentStack!.Id,
                     cardPromptDTO
@@ -151,7 +156,7 @@ internal class ManageCardsMenu : IMenu
 
             if (cardPromptDTO != null)
             {
-                bool result = CardDao.UpdateCard(
+                bool result = _cardDao.Update(
                    CardUpdateDTO.FromPromptDTO(
                        selectedCardShowDTO.Id,
                        CurrentStack!.Id,
@@ -184,7 +189,7 @@ internal class ManageCardsMenu : IMenu
     {
         _consoleHelper.ShowTitle("List of cards", mustClearWindow);
 
-        List<CardShowDTO> cards = CardDao.GetAllCardsFromStack(CurrentStack!.Id);
+        List<CardShowDTO> cards = _cardDao.AllCardsFromStack(CurrentStack!.Id);
 
         if (cards.Count() > 0)
         {
@@ -217,7 +222,7 @@ internal class ManageCardsMenu : IMenu
 
         if (selectedCardShowDTO != null)
         {
-            bool result = CardDao.DeleteCardById(selectedCardShowDTO.Id);
+            bool result = _cardDao.Delete(selectedCardShowDTO.Id);
 
             _consoleHelper.ShowMessage(result ? "Card deleted successfully!" : "Something went wrong :(");
             _consoleHelper.PressAnyKeyToContinue();
@@ -278,11 +283,11 @@ internal class ManageCardsMenu : IMenu
                     {
                         if (desiredSequence < defaultCardShowDTO.Sequence)
                         {
-                            CardDao.Add1ToAllSequencesStartingFrom(desiredSequence, CurrentStack!.Id, defaultCardShowDTO.Sequence);
+                            _cardDao.Add1ToAllSequencesStartingFrom(desiredSequence, CurrentStack!.Id, defaultCardShowDTO.Sequence);
                         }
                         else
                         {
-                            CardDao.Subtract1ToAllSequencesStartingFrom(defaultCardShowDTO.Sequence, CurrentStack!.Id, desiredSequence);
+                            _cardDao.Subtract1ToAllSequencesStartingFrom(defaultCardShowDTO.Sequence, CurrentStack!.Id, desiredSequence);
                         }
                     }
                 }
@@ -291,7 +296,7 @@ internal class ManageCardsMenu : IMenu
                     if (desiredSequence != recommendedSequence)
                     {
                         // in this case we add 1 to all cards with sequence equal or bigger than this
-                        CardDao.Add1ToAllSequencesStartingFrom(desiredSequence, CurrentStack!.Id);
+                        _cardDao.Add1ToAllSequencesStartingFrom(desiredSequence, CurrentStack!.Id);
                     }
                 }
 
@@ -305,7 +310,7 @@ internal class ManageCardsMenu : IMenu
 
     internal CardShowDTO? ShowCardsAndAskForSequence(string message)
     {
-        List<CardShowDTO> cards = CardDao.GetAllCardsFromStack(CurrentStack!.Id);
+        List<CardShowDTO> cards = _cardDao.AllCardsFromStack(CurrentStack!.Id);
 
         if (cards.Count <= 0)
         {
