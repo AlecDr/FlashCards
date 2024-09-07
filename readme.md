@@ -42,6 +42,7 @@ Welcome to the **FlashCards** project! This .NET application is designed to help
 - **Study Sessions**: Conduct study sessions by reviewing your flashcards, tracking your progress, and focusing on areas that need improvement.
 - **Database Integration**: Stores flashcards in a database, making it easy to retrieve and manage large sets of cards.
 - **Console-Based Interface**: User-friendly console interface for navigating through different menus and options.
+- **DI Container**: DI Container to inject required implementations via contracts.
 
 ### Design Patterns 🎨
 
