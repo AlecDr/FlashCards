@@ -50,6 +50,7 @@ internal class Program
         // Register services with the container
         services.AddTransient<IStackDAO, SQLServerStackDAO>();
         services.AddTransient<ICardDAO, SQLServerCardDAO>();
+        services.AddTransient<IReportsDAO, SQLServerReportsDAO>();
 
         // Register the main app class (entry point for the app)
         services.AddSingleton<Program>();

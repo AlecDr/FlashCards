@@ -1,4 +1,4 @@
-﻿using FlashCards.Data.Daos;
+﻿using FlashCards.Data.Daos.Interfaces;
 using FlashCards.Data.Dtos.Reports;
 using FlashCards.Helpers;
 using FlashCards.Menus.Interfaces;
@@ -12,12 +12,18 @@ internal class ReportsMenu : IMenu
     private readonly IServiceProvider _serviceProvider;
     private readonly ConsoleHelper _consoleHelper;
     private readonly FlashCardsHelper _flashCardsHelper;
+    private readonly IReportsDAO _reportsDao;
 
-    public ReportsMenu(IServiceProvider serviceProvider, ConsoleHelper consoleHelper, FlashCardsHelper flashCardsHelper)
+    public ReportsMenu(
+        IServiceProvider serviceProvider,
+        ConsoleHelper consoleHelper,
+        FlashCardsHelper flashCardsHelper,
+        IReportsDAO reportsDao)
     {
         _serviceProvider = serviceProvider;
         _consoleHelper = consoleHelper;
         _flashCardsHelper = flashCardsHelper;
+        _reportsDao = reportsDao;
     }
 
     public void Run()
@@ -62,7 +68,7 @@ internal class ReportsMenu : IMenu
 
     private void ResumedStudySessions()
     {
-        List<ResumedStudySessionsReportDTO> resumedStudySessions = ReportsDao.ResumedStudySessionsByUser(_flashCardsHelper.CurrentUser!);
+        List<ResumedStudySessionsReportDTO> resumedStudySessions = _reportsDao.ResumedStudySessionsByUser(_flashCardsHelper.CurrentUser!);
 
         if (resumedStudySessions.Count > 0)
         {

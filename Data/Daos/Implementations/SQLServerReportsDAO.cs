@@ -1,13 +1,13 @@
 ﻿using Dapper;
+using FlashCards.Data.Daos.Interfaces;
 using FlashCards.Data.Dtos.Reports;
 using FlashCards.Helpers;
 
-namespace FlashCards.Data.Daos;
+namespace FlashCards.Data.Daos.Implementations;
 
-internal class ReportsDao
+internal class SQLServerReportsDAO : IReportsDAO
 {
-
-    internal static List<ResumedStudySessionsReportDTO> ResumedStudySessionsByUser(string username)
+    public List<ResumedStudySessionsReportDTO> ResumedStudySessionsByUser(string username)
     {
         DatabaseHelper.SqliteConnection!.Open();
 
