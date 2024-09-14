@@ -44,7 +44,7 @@ Welcome to the **FlashCards** project! This .NET application is designed to help
 - **Console-Based Interface**: User-friendly console interface for navigating through different menus and options.
 - **DI Container**: DI Container to inject required implementations via contracts.
 
-### Design Patterns 🎨
+## 🎨 Design Patterns 
 
 This project leverages key architectural patterns to ensure maintainability and scalability:
 
